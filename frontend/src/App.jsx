@@ -1,18 +1,18 @@
-import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import KitchenForm from './Pages/KitchenForm';
+import KitchenSummary from './Pages/KitchenSummary';
 
-import Home from "./Pages/Home";
 
-const App = () => {
+function App() {
   return (
-    <div>
-      <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </Router>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<KitchenForm />} />
+        <Route path="/kitchen-summary" element={<KitchenSummary />} />
+      </Routes>
+    </Router>
   );
-};
+}
 
 export default App;
