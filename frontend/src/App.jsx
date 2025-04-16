@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import Home from "./Pages/Home";
 import RoomBooking from "./Pages/RoomBooking";
+import EventBooking from "./Pages/EventBooking";
 
 const App = () => {
   return (
@@ -13,6 +14,7 @@ const App = () => {
         </Routes>
         <Routes>
           <Route path="/room-booking" element={<RoomBooking />} />
+          <Route path="/event-booking" element={<EventBooking />} />
         </Routes>
       </Router>
     </div>
