@@ -4,12 +4,9 @@ export const createKitchen = async (req, res) => {
   try {
     const {
       orderId,
-      itemNames,
       itemCategory,
       itemType,
-      quantity,
-      unit,
-      price,
+      itemDetails,        // array of { name, quantity, price }
       orderDate,
       expectedDeliveryDate,
       supplierName,
@@ -17,17 +14,16 @@ export const createKitchen = async (req, res) => {
       paymentStatus,
       orderedBy,
       remarks,
-      totalCost,
+      totalCost
     } = req.body;
 
-    // Validate required fields.
+    // Basic required‑field check
     if (
       !orderId ||
       !itemCategory ||
       !itemType ||
-      !quantity ||
-      !unit ||
-      !price ||
+      !Array.isArray(itemDetails) ||
+      itemDetails.length === 0 ||
       !orderDate ||
       !expectedDeliveryDate ||
       !supplierName ||
@@ -38,38 +34,36 @@ export const createKitchen = async (req, res) => {
     ) {
       return res.status(400).json({ message: "All required fields must be provided." });
     }
-    
-    // Validate multi-select count based on category.
+
+    // Validate itemDetails length by category/type
+    const count = itemDetails.length;
     if (itemCategory === "Food") {
-      if (itemType === "Vegetables" || itemType === "Fruits") {
-        if (!Array.isArray(itemNames) || itemNames.length < 4 || itemNames.length > 10) {
-          return res.status(400).json({ message: "For Vegetables and Fruits, please select at least 4 and maximum 10 items." });
-        }
-      } else { // Meat
-        if (!Array.isArray(itemNames) || itemNames.length < 3 || itemNames.length > 10) {
-          return res.status(400).json({ message: "For Meat, please select at least 3 and maximum 10 items." });
-        }
+      const min = (itemType === "Vegetables" || itemType === "Fruits") ? 4 : 3;
+      if (count < min || count > 10) {
+        return res.status(400).json({ message: `For ${itemType}, select between ${min} and 10 items.` });
+      }
+    } else if (itemCategory === "Beverage" && itemType === "Soft Drinks") {
+      if (count < 3 || count > 10) {
+        return res.status(400).json({ message: "For Soft Drinks, select between 3 and 10 items." });
+      }
+    } else if (itemCategory === "Equipment") {
+      if (count < 2 || count > 10) {
+        return res.status(400).json({ message: "For Equipment, select between 2 and 10 items." });
       }
     }
-    if (itemCategory === "Beverage" && itemType === "Soft Drinks") {
-      if (!Array.isArray(itemNames) || itemNames.length < 3 || itemNames.length > 10) {
-        return res.status(400).json({ message: "For Soft Drinks, please select at least 3 and maximum 10 items." });
-      }
-    }
-    if (itemCategory === "Equipment") {
-      if (!Array.isArray(itemNames) || itemNames.length < 2 || itemNames.length > 10) {
-        return res.status(400).json({ message: "For Equipment, please select at least 2 and maximum 10 items." });
+
+    // Validate each itemDetail
+    for (const { name, quantity, price } of itemDetails) {
+      if (!name || quantity < 0 || price < 0) {
+        return res.status(400).json({ message: "Each item must have a name, non‑negative quantity and price." });
       }
     }
 
     const kitchen = new Kitchen({
       orderId,
-      itemNames,
       itemCategory,
       itemType,
-      quantity,
-      unit,
-      price,
+      itemDetails,
       orderDate,
       expectedDeliveryDate,
       supplierName,
@@ -77,7 +71,7 @@ export const createKitchen = async (req, res) => {
       paymentStatus,
       orderedBy,
       remarks,
-      totalCost,
+      totalCost
     });
 
     await kitchen.save();
