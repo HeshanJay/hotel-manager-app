@@ -8,35 +8,94 @@ const RoomBooking = () => {
     suite: 250,
   };
 
-  // Define service prices
+  // Define service prices (adult prices)
   const servicePrices = {
     breakfast: 10, // per person per night
     parking: 10, // per room per night
     airportTransfer: 50, // per booking
+    swimmingPool: 20, // per person per day
+    golf: 30, // per person per day
+    spa: 40, // per person per day
+    gym: 15, // per person per day
+  };
+
+  // Generate a random booking ID
+  const generateBookingId = () => {
+    return "BK-" + Math.random().toString(36).substr(2, 8).toUpperCase();
   };
 
   // State for form data
   const [formData, setFormData] = useState({
+    bookingId: generateBookingId(),
     fullName: "",
     email: "",
     phone: "",
+    address1: "",
+    address2: "",
+    address3: "",
+    state: "",
+    zip: "",
+    country: "",
     checkIn: "",
     checkOut: "",
     adults: 1,
     children: 0,
     roomType: "",
     numberOfRooms: 1,
-    nationality: "",
     agreeTerms: false,
     breakfast: false,
     parking: false,
     airportTransfer: false,
+    swimmingPool: false,
+    golf: false,
+    spa: false,
+    gym: false,
   });
 
-  // State for popup and error
+  // State for errors
+  const [errors, setErrors] = useState({});
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [bookingTotalCost, setBookingTotalCost] = useState(0);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // For server errors
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Validate function
+  const validate = (data) => {
+    const errors = {};
+    if (!data.fullName.trim()) errors.fullName = "Full Name is required";
+    else if (!/^[A-Za-z ]+$/.test(data.fullName))
+      errors.fullName = "Only letters and spaces allowed";
+    if (!data.email) errors.email = "Email is required";
+    else if (!/\S+@\S+\.\S+/.test(data.email))
+      errors.email = "Email is invalid";
+    if (!data.phone) errors.phone = "Phone number is required";
+    else if (!/^\d{10,15}$/.test(data.phone))
+      errors.phone = "Phone number must be 10-15 digits";
+    if (!data.address1.trim()) errors.address1 = "Address Line 1 is required";
+    if (!data.state.trim()) errors.state = "State/Province is required";
+    if (!data.zip.trim()) errors.zip = "Zip/Postal Code is required";
+    if (!data.country.trim()) errors.country = "Country is required";
+    if (!data.checkIn) errors.checkIn = "Check-in date is required";
+    else {
+      const checkInDate = new Date(data.checkIn);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (checkInDate < today)
+        errors.checkIn = "Check-in date cannot be in the past";
+    }
+    if (!data.checkOut) errors.checkOut = "Check-out date is required";
+    else if (data.checkIn && new Date(data.checkIn) >= new Date(data.checkOut))
+      errors.checkOut = "Check-out must be after check-in";
+    if (data.adults < 1) errors.adults = "At least one adult is required";
+    if (data.children < 0)
+      errors.children = "Number of children cannot be negative";
+    if (!data.roomType) errors.roomType = "Room type is required";
+    if (data.numberOfRooms < 1)
+      errors.numberOfRooms = "At least one room is required";
+    if (!data.agreeTerms)
+      errors.agreeTerms = "You must agree to the terms and conditions";
+    return errors;
+  };
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -51,30 +110,70 @@ const RoomBooking = () => {
     }));
   };
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(""); // Reset error
-    try {
-      const response = await fetch("http://localhost:5000/api/bookings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+    const validationErrors = validate(formData);
+    setErrors(validationErrors);
 
-      const data = await response.json();
-      if (response.ok) {
-        setBookingTotalCost(data.totalCost);
-        setIsPopupOpen(true);
-        console.log("Booking saved:", data);
-      } else {
-        setError(data.message || "Failed to save booking");
+    if (Object.keys(validationErrors).length === 0) {
+      setError("");
+      setIsSubmitting(true);
+
+      try {
+        // Calculate total cost
+        const total = calculateTotalCost(formData);
+
+        // Prepare data for MongoDB
+        const bookingData = {
+          bookingId: formData.bookingId,
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+          address1: formData.address1,
+          address2: formData.address2,
+          address3: formData.address3,
+          state: formData.state,
+          zip: formData.zip,
+          country: formData.country,
+          checkIn: formData.checkIn,
+          checkOut: formData.checkOut,
+          adults: formData.adults,
+          children: formData.children,
+          roomType: formData.roomType,
+          numberOfRooms: formData.numberOfRooms,
+          agreeTerms: formData.agreeTerms,
+          breakfast: formData.breakfast,
+          parking: formData.parking,
+          airportTransfer: formData.airportTransfer,
+          swimmingPool: formData.swimmingPool,
+          golf: formData.golf,
+          spa: formData.spa,
+          gym: formData.gym,
+          totalCost: total,
+        };
+
+        const response = await fetch("http://localhost:5000/api/bookings", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(bookingData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setBookingTotalCost(total);
+          setIsPopupOpen(true);
+        } else {
+          setError(data.message || "Failed to save booking");
+        }
+      } catch (error) {
+        setError("Network error, please try again");
+        console.error("Error:", error);
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (error) {
-      setError("Network error, please try again");
-      console.error("Error:", error);
     }
   };
 
@@ -96,21 +195,61 @@ const RoomBooking = () => {
     const nights = calculateNumberOfNights(data.checkIn, data.checkOut);
     let total = 0;
 
+    // Room cost
     if (data.roomType && nights > 0 && data.numberOfRooms > 0) {
       total += data.numberOfRooms * nights * roomPrices[data.roomType];
     }
 
+    // Breakfast (children pay half price)
     if (data.breakfast) {
-      const totalPeople = parseInt(data.adults) + parseInt(data.children);
-      total += nights * totalPeople * servicePrices.breakfast;
+      const adultCost =
+        parseInt(data.adults) * nights * servicePrices.breakfast;
+      const childCost =
+        parseInt(data.children) * nights * (servicePrices.breakfast / 2);
+      total += adultCost + childCost;
     }
 
+    // Parking
     if (data.parking) {
       total += data.numberOfRooms * nights * servicePrices.parking;
     }
 
+    // Airport Transfer
     if (data.airportTransfer) {
       total += servicePrices.airportTransfer;
+    }
+
+    // Swimming Pool (children pay half price)
+    if (data.swimmingPool) {
+      const adultCost =
+        parseInt(data.adults) * nights * servicePrices.swimmingPool;
+      const childCost =
+        parseInt(data.children) * nights * (servicePrices.swimmingPool / 2);
+      total += adultCost + childCost;
+    }
+
+    // Golf (children pay half price)
+    if (data.golf) {
+      const adultCost = parseInt(data.adults) * nights * servicePrices.golf;
+      const childCost =
+        parseInt(data.children) * nights * (servicePrices.golf / 2);
+      total += adultCost + childCost;
+    }
+
+    // Spa (children pay half price)
+    if (data.spa) {
+      const adultCost = parseInt(data.adults) * nights * servicePrices.spa;
+      const childCost =
+        parseInt(data.children) * nights * (servicePrices.spa / 2);
+      total += adultCost + childCost;
+    }
+
+    // Gym (children pay half price)
+    if (data.gym) {
+      const adultCost = parseInt(data.adults) * nights * servicePrices.gym;
+      const childCost =
+        parseInt(data.children) * nights * (servicePrices.gym / 2);
+      total += adultCost + childCost;
     }
 
     return total;
@@ -134,6 +273,22 @@ const RoomBooking = () => {
           <div className="space-y-4">
             <div className="mb-4">
               <label
+                htmlFor="bookingId"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Booking ID
+              </label>
+              <input
+                type="text"
+                id="bookingId"
+                name="bookingId"
+                value={formData.bookingId}
+                readOnly
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400 bg-gray-100"
+              />
+            </div>
+            <div className="mb-4">
+              <label
                 htmlFor="fullName"
                 className="block text-sm font-medium text-gray-700"
               >
@@ -145,9 +300,11 @@ const RoomBooking = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
               />
+              {errors.fullName && (
+                <p className="mt-2 text-sm text-red-600">{errors.fullName}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -162,9 +319,11 @@ const RoomBooking = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
               />
+              {errors.email && (
+                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -179,9 +338,122 @@ const RoomBooking = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
               />
+              {errors.phone && (
+                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+              )}
+            </div>
+            <h3 className="text-lg font-medium mb-2">Address</h3>
+            <div className="space-y-4">
+              <div className="mb-4">
+                <label
+                  htmlFor="address1"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address Line 1
+                </label>
+                <input
+                  type="text"
+                  id="address1"
+                  name="address1"
+                  value={formData.address1}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                />
+                {errors.address1 && (
+                  <p className="mt-2 text-sm text-red-600">{errors.address1}</p>
+                )}
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="address2"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address Line 2
+                </label>
+                <input
+                  type="text"
+                  id="address2"
+                  name="address2"
+                  value={formData.address2}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="address3"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Address Line 3
+                </label>
+                <input
+                  type="text"
+                  id="address3"
+                  name="address3"
+                  value={formData.address3}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="state"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  State / Province
+                </label>
+                <input
+                  type="text"
+                  id="state"
+                  name="state"
+                  value={formData.state}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                />
+                {errors.state && (
+                  <p className="mt-2 text-sm text-red-600">{errors.state}</p>
+                )}
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="zip"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Zip / Postal Code
+                </label>
+                <input
+                  type="text"
+                  id="zip"
+                  name="zip"
+                  value={formData.zip}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                />
+                {errors.zip && (
+                  <p className="mt-2 text-sm text-red-600">{errors.zip}</p>
+                )}
+              </div>
+              <div className="mb-4">
+                <label
+                  htmlFor="country"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Country
+                </label>
+                <input
+                  type="text"
+                  id="country"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleChange}
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                />
+                {errors.country && (
+                  <p className="mt-2 text-sm text-red-600">{errors.country}</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -203,9 +475,11 @@ const RoomBooking = () => {
                 name="checkIn"
                 value={formData.checkIn}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+              {errors.checkIn && (
+                <p className="mt-2 text-sm text-red-600">{errors.checkIn}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -220,9 +494,11 @@ const RoomBooking = () => {
                 name="checkOut"
                 value={formData.checkOut}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+              {errors.checkOut && (
+                <p className="mt-2 text-sm text-red-600">{errors.checkOut}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -238,9 +514,11 @@ const RoomBooking = () => {
                 value={formData.adults}
                 onChange={handleChange}
                 min="1"
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+              {errors.adults && (
+                <p className="mt-2 text-sm text-red-600">{errors.adults}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -256,9 +534,11 @@ const RoomBooking = () => {
                 value={formData.children}
                 onChange={handleChange}
                 min="0"
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               />
+              {errors.children && (
+                <p className="mt-2 text-sm text-red-600">{errors.children}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -272,7 +552,6 @@ const RoomBooking = () => {
                 name="roomType"
                 value={formData.roomType}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
                 <option value="">Select Room Type</option>
@@ -280,6 +559,9 @@ const RoomBooking = () => {
                 <option value="deluxe">Deluxe Room</option>
                 <option value="suite">Suite</option>
               </select>
+              {errors.roomType && (
+                <p className="mt-2 text-sm text-red-600">{errors.roomType}</p>
+              )}
             </div>
             <div className="mb-4">
               <label
@@ -293,7 +575,6 @@ const RoomBooking = () => {
                 name="numberOfRooms"
                 value={formData.numberOfRooms}
                 onChange={handleChange}
-                required
                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               >
                 {[1, 2, 3, 4].map((num) => (
@@ -302,45 +583,11 @@ const RoomBooking = () => {
                   </option>
                 ))}
               </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Additional Information */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">Additional Information</h2>
-          <div className="space-y-4">
-            <div className="mb-4">
-              <label
-                htmlFor="nationality"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Nationality
-              </label>
-              <input
-                type="text"
-                id="nationality"
-                name="nationality"
-                value={formData.nationality}
-                onChange={handleChange}
-                required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
-              />
-            </div>
-            <div className="mb-4">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="agreeTerms"
-                  checked={formData.agreeTerms}
-                  onChange={handleChange}
-                  required
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2 text-sm text-gray-700">
-                  I agree to the terms and conditions
-                </span>
-              </label>
+              {errors.numberOfRooms && (
+                <p className="mt-2 text-sm text-red-600">
+                  {errors.numberOfRooms}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -350,7 +597,7 @@ const RoomBooking = () => {
           <h2 className="text-xl font-bold mb-4">Services</h2>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Additional Services
+              Additional Services (Children pay half price)
             </label>
             <div className="mt-2 space-y-2">
               <label className="flex items-center">
@@ -362,7 +609,8 @@ const RoomBooking = () => {
                   className="form-checkbox h-5 w-5 text-indigo-600"
                 />
                 <span className="ml-2">
-                  Breakfast ($10 per person per night)
+                  Breakfast (${servicePrices.breakfast} adult / $
+                  {servicePrices.breakfast / 2} child per night)
                 </span>
               </label>
               <label className="flex items-center">
@@ -373,7 +621,9 @@ const RoomBooking = () => {
                   onChange={handleChange}
                   className="form-checkbox h-5 w-5 text-indigo-600"
                 />
-                <span className="ml-2">Parking ($10 per room per night)</span>
+                <span className="ml-2">
+                  Parking (${servicePrices.parking} per room per night)
+                </span>
               </label>
               <label className="flex items-center">
                 <input
@@ -383,22 +633,95 @@ const RoomBooking = () => {
                   onChange={handleChange}
                   className="form-checkbox h-5 w-5 text-indigo-600"
                 />
-                <span className="ml-2">Airport Transfer ($50 per booking)</span>
+                <span className="ml-2">
+                  Airport Transfer (${servicePrices.airportTransfer} per
+                  booking)
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="swimmingPool"
+                  checked={formData.swimmingPool}
+                  onChange={handleChange}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+                <span className="ml-2">
+                  Swimming Pool (${servicePrices.swimmingPool} adult / $
+                  {servicePrices.swimmingPool / 2} child per day)
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="golf"
+                  checked={formData.golf}
+                  onChange={handleChange}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+                <span className="ml-2">
+                  Golf (${servicePrices.golf} adult / ${servicePrices.golf / 2}{" "}
+                  child per day)
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="spa"
+                  checked={formData.spa}
+                  onChange={handleChange}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+                <span className="ml-2">
+                  Spa (${servicePrices.spa} adult / ${servicePrices.spa / 2}{" "}
+                  child per day)
+                </span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  name="gym"
+                  checked={formData.gym}
+                  onChange={handleChange}
+                  className="form-checkbox h-5 w-5 text-indigo-600"
+                />
+                <span className="ml-2">
+                  Gym (${servicePrices.gym} adult / ${servicePrices.gym / 2}{" "}
+                  child per day)
+                </span>
               </label>
             </div>
           </div>
+        </div>
+        <div className="mb-4">
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="agreeTerms"
+              checked={formData.agreeTerms}
+              onChange={handleChange}
+              className="form-checkbox h-5 w-5 text-indigo-600"
+            />
+            <span className="ml-2">I agree to the terms and conditions</span>
+          </label>
+          {errors.agreeTerms && (
+            <p className="mt-2 text-sm text-red-600">{errors.agreeTerms}</p>
+          )}
         </div>
       </div>
 
       <button
         onClick={handleSubmit}
-        className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6"
+        disabled={isSubmitting}
+        className={`w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6 ${
+          isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+        }`}
       >
-        Book Now
+        {isSubmitting ? "Processing..." : "Book Now"}
       </button>
       {totalCost > 0 && (
         <div className="mt-4 text-lg font-medium text-gray-900">
-          Total Cost: ${totalCost}
+          Total Cost: ${totalCost.toFixed(2)}
         </div>
       )}
       {isPopupOpen && (
@@ -406,6 +729,9 @@ const RoomBooking = () => {
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
             <p className="text-green-600 text-xl mb-4">Booking Successful!</p>
             <h2 className="text-2xl font-bold mb-4">Booking Summary</h2>
+            <p>
+              <strong>Booking ID:</strong> {formData.bookingId}
+            </p>
             <p>
               <strong>Room Type:</strong> {formData.roomType}
             </p>
@@ -431,9 +757,13 @@ const RoomBooking = () => {
               {formData.breakfast && <li>Breakfast</li>}
               {formData.parking && <li>Parking</li>}
               {formData.airportTransfer && <li>Airport Transfer</li>}
+              {formData.swimmingPool && <li>Swimming Pool</li>}
+              {formData.golf && <li>Golf</li>}
+              {formData.spa && <li>Spa</li>}
+              {formData.gym && <li>Gym</li>}
             </ul>
             <p>
-              <strong>Total Cost:</strong> ${bookingTotalCost}
+              <strong>Total Cost:</strong> ${bookingTotalCost.toFixed(2)}
             </p>
             <button
               onClick={() => setIsPopupOpen(false)}
