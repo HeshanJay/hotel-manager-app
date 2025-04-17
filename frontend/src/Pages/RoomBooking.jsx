@@ -11,12 +11,9 @@ const RoomBooking = () => {
   // Define service prices (adult prices)
   const servicePrices = {
     breakfast: 10, // per person per night
-    parking: 10, // per room per night
     airportTransfer: 50, // per booking
-    swimmingPool: 20, // per person per day
     golf: 30, // per person per day
     spa: 40, // per person per day
-    gym: 15, // per person per day
   };
 
   // Generate a random booking ID
@@ -44,12 +41,9 @@ const RoomBooking = () => {
     numberOfRooms: 1,
     agreeTerms: false,
     breakfast: false,
-    parking: false,
     airportTransfer: false,
-    swimmingPool: false,
     golf: false,
     spa: false,
-    gym: false,
   });
 
   // State for errors
@@ -143,12 +137,9 @@ const RoomBooking = () => {
           numberOfRooms: formData.numberOfRooms,
           agreeTerms: formData.agreeTerms,
           breakfast: formData.breakfast,
-          parking: formData.parking,
           airportTransfer: formData.airportTransfer,
-          swimmingPool: formData.swimmingPool,
           golf: formData.golf,
           spa: formData.spa,
-          gym: formData.gym,
           totalCost: total,
         };
 
@@ -200,18 +191,11 @@ const RoomBooking = () => {
       total += data.numberOfRooms * nights * roomPrices[data.roomType];
     }
 
-    // Breakfast (children pay half price)
+    // Breakfast (only for adults)
     if (data.breakfast) {
       const adultCost =
         parseInt(data.adults) * nights * servicePrices.breakfast;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.breakfast / 2);
-      total += adultCost + childCost;
-    }
-
-    // Parking
-    if (data.parking) {
-      total += data.numberOfRooms * nights * servicePrices.parking;
+      total += adultCost;
     }
 
     // Airport Transfer
@@ -219,37 +203,16 @@ const RoomBooking = () => {
       total += servicePrices.airportTransfer;
     }
 
-    // Swimming Pool (children pay half price)
-    if (data.swimmingPool) {
-      const adultCost =
-        parseInt(data.adults) * nights * servicePrices.swimmingPool;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.swimmingPool / 2);
-      total += adultCost + childCost;
-    }
-
-    // Golf (children pay half price)
+    // Golf (only for adults)
     if (data.golf) {
       const adultCost = parseInt(data.adults) * nights * servicePrices.golf;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.golf / 2);
-      total += adultCost + childCost;
+      total += adultCost;
     }
 
-    // Spa (children pay half price)
+    // Spa (only for adults)
     if (data.spa) {
       const adultCost = parseInt(data.adults) * nights * servicePrices.spa;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.spa / 2);
-      total += adultCost + childCost;
-    }
-
-    // Gym (children pay half price)
-    if (data.gym) {
-      const adultCost = parseInt(data.adults) * nights * servicePrices.gym;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.gym / 2);
-      total += adultCost + childCost;
+      total += adultCost;
     }
 
     return total;
@@ -597,7 +560,7 @@ const RoomBooking = () => {
           <h2 className="text-xl font-bold mb-4">Services</h2>
           <div className="mb-4">
             <label className="block text-sm font-medium text-gray-700">
-              Additional Services (Children pay half price)
+              Additional Services
             </label>
             <div className="mt-2 space-y-2">
               <label className="flex items-center">
@@ -609,20 +572,7 @@ const RoomBooking = () => {
                   className="form-checkbox h-5 w-5 text-indigo-600"
                 />
                 <span className="ml-2">
-                  Breakfast (${servicePrices.breakfast} adult / $
-                  {servicePrices.breakfast / 2} child per night)
-                </span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="parking"
-                  checked={formData.parking}
-                  onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2">
-                  Parking (${servicePrices.parking} per room per night)
+                  Breakfast (${servicePrices.breakfast} adult per night)
                 </span>
               </label>
               <label className="flex items-center">
@@ -641,27 +591,13 @@ const RoomBooking = () => {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  name="swimmingPool"
-                  checked={formData.swimmingPool}
-                  onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2">
-                  Swimming Pool (${servicePrices.swimmingPool} adult / $
-                  {servicePrices.swimmingPool / 2} child per day)
-                </span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
                   name="golf"
                   checked={formData.golf}
                   onChange={handleChange}
                   className="form-checkbox h-5 w-5 text-indigo-600"
                 />
                 <span className="ml-2">
-                  Golf (${servicePrices.golf} adult / ${servicePrices.golf / 2}{" "}
-                  child per day)
+                  Golf (${servicePrices.golf} adult per day)
                 </span>
               </label>
               <label className="flex items-center">
@@ -673,21 +609,7 @@ const RoomBooking = () => {
                   className="form-checkbox h-5 w-5 text-indigo-600"
                 />
                 <span className="ml-2">
-                  Spa (${servicePrices.spa} adult / ${servicePrices.spa / 2}{" "}
-                  child per day)
-                </span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="gym"
-                  checked={formData.gym}
-                  onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2">
-                  Gym (${servicePrices.gym} adult / ${servicePrices.gym / 2}{" "}
-                  child per day)
+                  Spa (${servicePrices.spa} adult per day)
                 </span>
               </label>
             </div>
@@ -755,12 +677,9 @@ const RoomBooking = () => {
             </p>
             <ul className="list-disc pl-5 mb-4">
               {formData.breakfast && <li>Breakfast</li>}
-              {formData.parking && <li>Parking</li>}
               {formData.airportTransfer && <li>Airport Transfer</li>}
-              {formData.swimmingPool && <li>Swimming Pool</li>}
               {formData.golf && <li>Golf</li>}
               {formData.spa && <li>Spa</li>}
-              {formData.gym && <li>Gym</li>}
             </ul>
             <p>
               <strong>Total Cost:</strong> ${bookingTotalCost.toFixed(2)}
