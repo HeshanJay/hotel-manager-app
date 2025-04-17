@@ -11,12 +11,9 @@ const RoomBooking = () => {
   // Define service prices (adult prices)
   const servicePrices = {
     breakfast: 10, // per person per night
-    parking: 10, // per room per night
     airportTransfer: 50, // per booking
-    swimmingPool: 20, // per person per day
     golf: 30, // per person per day
     spa: 40, // per person per day
-    gym: 15, // per person per day
   };
 
   // Generate a random booking ID
@@ -44,12 +41,9 @@ const RoomBooking = () => {
     numberOfRooms: 1,
     agreeTerms: false,
     breakfast: false,
-    parking: false,
     airportTransfer: false,
-    swimmingPool: false,
     golf: false,
     spa: false,
-    gym: false,
   });
 
   // State for errors
@@ -143,12 +137,9 @@ const RoomBooking = () => {
           numberOfRooms: formData.numberOfRooms,
           agreeTerms: formData.agreeTerms,
           breakfast: formData.breakfast,
-          parking: formData.parking,
           airportTransfer: formData.airportTransfer,
-          swimmingPool: formData.swimmingPool,
           golf: formData.golf,
           spa: formData.spa,
-          gym: formData.gym,
           totalCost: total,
         };
 
@@ -200,18 +191,11 @@ const RoomBooking = () => {
       total += data.numberOfRooms * nights * roomPrices[data.roomType];
     }
 
-    // Breakfast (children pay half price)
+    // Breakfast (only for adults)
     if (data.breakfast) {
       const adultCost =
         parseInt(data.adults) * nights * servicePrices.breakfast;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.breakfast / 2);
-      total += adultCost + childCost;
-    }
-
-    // Parking
-    if (data.parking) {
-      total += data.numberOfRooms * nights * servicePrices.parking;
+      total += adultCost;
     }
 
     // Airport Transfer
@@ -219,37 +203,16 @@ const RoomBooking = () => {
       total += servicePrices.airportTransfer;
     }
 
-    // Swimming Pool (children pay half price)
-    if (data.swimmingPool) {
-      const adultCost =
-        parseInt(data.adults) * nights * servicePrices.swimmingPool;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.swimmingPool / 2);
-      total += adultCost + childCost;
-    }
-
-    // Golf (children pay half price)
+    // Golf (only for adults)
     if (data.golf) {
       const adultCost = parseInt(data.adults) * nights * servicePrices.golf;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.golf / 2);
-      total += adultCost + childCost;
+      total += adultCost;
     }
 
-    // Spa (children pay half price)
+    // Spa (only for adults)
     if (data.spa) {
       const adultCost = parseInt(data.adults) * nights * servicePrices.spa;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.spa / 2);
-      total += adultCost + childCost;
-    }
-
-    // Gym (children pay half price)
-    if (data.gym) {
-      const adultCost = parseInt(data.adults) * nights * servicePrices.gym;
-      const childCost =
-        parseInt(data.children) * nights * (servicePrices.gym / 2);
-      total += adultCost + childCost;
+      total += adultCost;
     }
 
     return total;
@@ -259,22 +222,37 @@ const RoomBooking = () => {
   const totalCost = calculateTotalCost(formData);
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-3xl font-bold mb-6 text-center">Book Your Room</h1>
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">
+        Book Your Room
+      </h1>
       {error && (
-        <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-md">
-          {error}
+        <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-md">
+          <div className="flex items-center">
+            <svg
+              className="w-5 h-5 text-red-500 mr-3"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <p className="text-red-700 font-medium">{error}</p>
+          </div>
         </div>
       )}
-      <div className="space-y-6">
+      <div className="bg-white p-8 rounded-xl shadow-lg space-y-6">
         {/* Personal Information */}
         <div>
           <h2 className="text-xl font-bold mb-4">Personal Information</h2>
           <div className="space-y-4">
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="bookingId"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Booking ID
               </label>
@@ -284,13 +262,13 @@ const RoomBooking = () => {
                 name="bookingId"
                 value={formData.bookingId}
                 readOnly
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400 bg-gray-100"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200 bg-gray-100"
               />
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="fullName"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Full Name
               </label>
@@ -300,16 +278,29 @@ const RoomBooking = () => {
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.fullName && (
-                <p className="mt-2 text-sm text-red-600">{errors.fullName}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.fullName}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Email Address
               </label>
@@ -319,16 +310,29 @@ const RoomBooking = () => {
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.email && (
-                <p className="mt-2 text-sm text-red-600">{errors.email}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.email}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="phone"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Phone Number
               </label>
@@ -338,18 +342,31 @@ const RoomBooking = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.phone && (
-                <p className="mt-2 text-sm text-red-600">{errors.phone}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.phone}
+                </p>
               )}
             </div>
             <h3 className="text-lg font-medium mb-2">Address</h3>
             <div className="space-y-4">
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="address1"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   Address Line 1
                 </label>
@@ -359,16 +376,29 @@ const RoomBooking = () => {
                   name="address1"
                   value={formData.address1}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                  className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
                 />
                 {errors.address1 && (
-                  <p className="mt-2 text-sm text-red-600">{errors.address1}</p>
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {errors.address1}
+                  </p>
                 )}
               </div>
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="address2"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   Address Line 2
                 </label>
@@ -378,13 +408,13 @@ const RoomBooking = () => {
                   name="address2"
                   value={formData.address2}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                  className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
                 />
               </div>
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="address3"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   Address Line 3
                 </label>
@@ -394,13 +424,13 @@ const RoomBooking = () => {
                   name="address3"
                   value={formData.address3}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                  className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
                 />
               </div>
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="state"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   State / Province
                 </label>
@@ -410,16 +440,29 @@ const RoomBooking = () => {
                   name="state"
                   value={formData.state}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                  className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
                 />
                 {errors.state && (
-                  <p className="mt-2 text-sm text-red-600">{errors.state}</p>
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {errors.state}
+                  </p>
                 )}
               </div>
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="zip"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   Zip / Postal Code
                 </label>
@@ -429,16 +472,29 @@ const RoomBooking = () => {
                   name="zip"
                   value={formData.zip}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                  className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
                 />
                 {errors.zip && (
-                  <p className="mt-2 text-sm text-red-600">{errors.zip}</p>
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {errors.zip}
+                  </p>
                 )}
               </div>
-              <div className="mb-4">
+              <div>
                 <label
                   htmlFor="country"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
                 >
                   Country
                 </label>
@@ -448,10 +504,23 @@ const RoomBooking = () => {
                   name="country"
                   value={formData.country}
                   onChange={handleChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm placeholder-gray-400"
+                  className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
                 />
                 {errors.country && (
-                  <p className="mt-2 text-sm text-red-600">{errors.country}</p>
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <svg
+                      className="w-4 h-4 mr-1"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    {errors.country}
+                  </p>
                 )}
               </div>
             </div>
@@ -462,10 +531,10 @@ const RoomBooking = () => {
         <div>
           <h2 className="text-xl font-bold mb-4">Booking Details</h2>
           <div className="space-y-4">
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="checkIn"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Check-in Date
               </label>
@@ -475,16 +544,29 @@ const RoomBooking = () => {
                 name="checkIn"
                 value={formData.checkIn}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.checkIn && (
-                <p className="mt-2 text-sm text-red-600">{errors.checkIn}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.checkIn}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="checkOut"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Check-out Date
               </label>
@@ -494,16 +576,29 @@ const RoomBooking = () => {
                 name="checkOut"
                 value={formData.checkOut}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.checkOut && (
-                <p className="mt-2 text-sm text-red-600">{errors.checkOut}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.checkOut}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="adults"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Number of Adults
               </label>
@@ -514,16 +609,29 @@ const RoomBooking = () => {
                 value={formData.adults}
                 onChange={handleChange}
                 min="1"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.adults && (
-                <p className="mt-2 text-sm text-red-600">{errors.adults}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.adults}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="children"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Number of Children
               </label>
@@ -534,16 +642,29 @@ const RoomBooking = () => {
                 value={formData.children}
                 onChange={handleChange}
                 min="0"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               />
               {errors.children && (
-                <p className="mt-2 text-sm text-red-600">{errors.children}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.children}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="roomType"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Room Type
               </label>
@@ -552,7 +673,7 @@ const RoomBooking = () => {
                 name="roomType"
                 value={formData.roomType}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               >
                 <option value="">Select Room Type</option>
                 <option value="standard">Standard Room</option>
@@ -560,13 +681,26 @@ const RoomBooking = () => {
                 <option value="suite">Suite</option>
               </select>
               {errors.roomType && (
-                <p className="mt-2 text-sm text-red-600">{errors.roomType}</p>
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  {errors.roomType}
+                </p>
               )}
             </div>
-            <div className="mb-4">
+            <div>
               <label
                 htmlFor="numberOfRooms"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-semibold text-gray-700 mb-2"
               >
                 Number of Rooms
               </label>
@@ -575,7 +709,7 @@ const RoomBooking = () => {
                 name="numberOfRooms"
                 value={formData.numberOfRooms}
                 onChange={handleChange}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
               >
                 {[1, 2, 3, 4].map((num) => (
                   <option key={num} value={num}>
@@ -584,7 +718,18 @@ const RoomBooking = () => {
                 ))}
               </select>
               {errors.numberOfRooms && (
-                <p className="mt-2 text-sm text-red-600">
+                <p className="mt-1 text-sm text-red-600 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                   {errors.numberOfRooms}
                 </p>
               )}
@@ -595,9 +740,9 @@ const RoomBooking = () => {
         {/* Services */}
         <div>
           <h2 className="text-xl font-bold mb-4">Services</h2>
-          <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Additional Services (Children pay half price)
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Additional Services
             </label>
             <div className="mt-2 space-y-2">
               <label className="flex items-center">
@@ -606,23 +751,10 @@ const RoomBooking = () => {
                   name="breakfast"
                   checked={formData.breakfast}
                   onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
+                  className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
                 <span className="ml-2">
-                  Breakfast (${servicePrices.breakfast} adult / $
-                  {servicePrices.breakfast / 2} child per night)
-                </span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="parking"
-                  checked={formData.parking}
-                  onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2">
-                  Parking (${servicePrices.parking} per room per night)
+                  Breakfast (${servicePrices.breakfast} adult per night)
                 </span>
               </label>
               <label className="flex items-center">
@@ -631,7 +763,7 @@ const RoomBooking = () => {
                   name="airportTransfer"
                   checked={formData.airportTransfer}
                   onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
+                  className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
                 <span className="ml-2">
                   Airport Transfer (${servicePrices.airportTransfer} per
@@ -641,27 +773,13 @@ const RoomBooking = () => {
               <label className="flex items-center">
                 <input
                   type="checkbox"
-                  name="swimmingPool"
-                  checked={formData.swimmingPool}
-                  onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2">
-                  Swimming Pool (${servicePrices.swimmingPool} adult / $
-                  {servicePrices.swimmingPool / 2} child per day)
-                </span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
                   name="golf"
                   checked={formData.golf}
                   onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
+                  className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
                 <span className="ml-2">
-                  Golf (${servicePrices.golf} adult / ${servicePrices.golf / 2}{" "}
-                  child per day)
+                  Golf (${servicePrices.golf} adult per day)
                 </span>
               </label>
               <label className="flex items-center">
@@ -670,60 +788,62 @@ const RoomBooking = () => {
                   name="spa"
                   checked={formData.spa}
                   onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
+                  className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
                 <span className="ml-2">
-                  Spa (${servicePrices.spa} adult / ${servicePrices.spa / 2}{" "}
-                  child per day)
-                </span>
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  name="gym"
-                  checked={formData.gym}
-                  onChange={handleChange}
-                  className="form-checkbox h-5 w-5 text-indigo-600"
-                />
-                <span className="ml-2">
-                  Gym (${servicePrices.gym} adult / ${servicePrices.gym / 2}{" "}
-                  child per day)
+                  Spa (${servicePrices.spa} adult per day)
                 </span>
               </label>
             </div>
           </div>
         </div>
-        <div className="mb-4">
+        <div>
           <label className="flex items-center">
             <input
               type="checkbox"
               name="agreeTerms"
               checked={formData.agreeTerms}
               onChange={handleChange}
-              className="form-checkbox h-5 w-5 text-indigo-600"
+              className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
             />
-            <span className="ml-2">I agree to the terms and conditions</span>
+            <span className="ml-2 text-sm text-gray-700">
+              I agree to the terms and conditions
+            </span>
           </label>
           {errors.agreeTerms && (
-            <p className="mt-2 text-sm text-red-600">{errors.agreeTerms}</p>
+            <p className="mt-1 text-sm text-red-600 flex items-center">
+              <svg
+                className="w-4 h-4 mr-1"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              {errors.agreeTerms}
+            </p>
           )}
         </div>
+        {totalCost > 0 && (
+          <div className="mt-6 text-center">
+            <p className="text-lg font-medium text-gray-800">
+              Total Cost: ${totalCost.toFixed(2)}
+            </p>
+          </div>
+        )}
+        <button
+          onClick={handleSubmit}
+          disabled={isSubmitting}
+          className={`w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+            isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          {isSubmitting ? "Processing..." : "Book Now"}
+        </button>
       </div>
-
-      <button
-        onClick={handleSubmit}
-        disabled={isSubmitting}
-        className={`w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 transition duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6 ${
-          isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-      >
-        {isSubmitting ? "Processing..." : "Book Now"}
-      </button>
-      {totalCost > 0 && (
-        <div className="mt-4 text-lg font-medium text-gray-900">
-          Total Cost: ${totalCost.toFixed(2)}
-        </div>
-      )}
       {isPopupOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
@@ -755,12 +875,9 @@ const RoomBooking = () => {
             </p>
             <ul className="list-disc pl-5 mb-4">
               {formData.breakfast && <li>Breakfast</li>}
-              {formData.parking && <li>Parking</li>}
               {formData.airportTransfer && <li>Airport Transfer</li>}
-              {formData.swimmingPool && <li>Swimming Pool</li>}
               {formData.golf && <li>Golf</li>}
               {formData.spa && <li>Spa</li>}
-              {formData.gym && <li>Gym</li>}
             </ul>
             <p>
               <strong>Total Cost:</strong> ${bookingTotalCost.toFixed(2)}

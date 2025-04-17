@@ -21,12 +21,9 @@ export const createBooking = async (req, res) => {
       numberOfRooms,
       agreeTerms,
       breakfast,
-      parking,
       airportTransfer,
-      swimmingPool,
       golf,
       spa,
-      gym,
       totalCost,
     } = req.body;
 
@@ -90,12 +87,9 @@ export const createBooking = async (req, res) => {
       numberOfRooms,
       agreeTerms,
       breakfast,
-      parking,
       airportTransfer,
-      swimmingPool,
       golf,
       spa,
-      gym,
       totalCost,
     });
 

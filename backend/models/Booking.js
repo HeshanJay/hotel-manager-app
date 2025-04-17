@@ -20,12 +20,9 @@ const bookingSchema = new mongoose.Schema(
     numberOfRooms: { type: Number, required: true },
     agreeTerms: { type: Boolean, required: true },
     breakfast: { type: Boolean, default: false },
-    parking: { type: Boolean, default: false },
     airportTransfer: { type: Boolean, default: false },
-    swimmingPool: { type: Boolean, default: false },
     golf: { type: Boolean, default: false },
     spa: { type: Boolean, default: false },
-    gym: { type: Boolean, default: false },
     totalCost: { type: Number, required: true },
   },
   { timestamps: true }
