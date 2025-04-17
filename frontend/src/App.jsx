@@ -1,9 +1,9 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import Home from "./Pages/Home";
 import RoomBooking from "./Pages/RoomBooking";
 import EventBooking from "./Pages/EventBooking";
+import EmployeeManagement from "./Pages/EmployeeManagement";
 
 const App = () => {
   return (
@@ -15,6 +15,7 @@ const App = () => {
         <Routes>
           <Route path="/room-booking" element={<RoomBooking />} />
           <Route path="/event-booking" element={<EventBooking />} />
+          <Route path="/employee-management" element={<EmployeeManagement />} />
         </Routes>
       </Router>
     </div>
