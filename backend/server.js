@@ -10,10 +10,10 @@ const app = express();
 
 // ✅ Middleware with configured CORS
 app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true,
+  origin: 'http://localhost:5173', // allow Vite frontend
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true, // if you send cookies
 }));
-
 app.use(express.json());
 
 // ✅ Routes
