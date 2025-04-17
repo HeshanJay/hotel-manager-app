@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 const KitchenForm = () => {
   // Today’s date (YYYY-MM-DD) for date validations.
@@ -70,13 +69,6 @@ const KitchenForm = () => {
     }
   };
 
-  // Unit mapping.
-  const unitMapping = {
-    Food: "kg",
-    Beverage: "bottles",
-    Equipment: "units"
-  };
-
   // Options for the Item Type dropdown.
   const itemTypeOptions = {
     Food: ["Vegetables", "Fruits", "Meat"],
@@ -104,8 +96,8 @@ const KitchenForm = () => {
     remarks: '',
   });
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
 
+  // Auto-generate Order ID on mount
   useEffect(() => {
     setFormData(prev => ({ ...prev, orderId: 'ORD-' + Date.now() }));
   }, []);
@@ -209,7 +201,21 @@ const KitchenForm = () => {
 
     try {
       await axios.post('http://localhost:5000/api/kitchen', { ...formData, totalCost });
-      navigate('/kitchen-summary', { state: { ...formData, totalCost } });
+      alert("Order submitted successfully!");
+      // Optional: reset the form if you like:
+      // setFormData({
+      //   orderId: 'ORD-' + Date.now(),
+      //   itemCategory: '',
+      //   itemType: '',
+      //   itemNames: [],
+      //   orderDate: '',
+      //   expectedDeliveryDate: '',
+      //   supplierName: '',
+      //   supplierContact: '',
+      //   paymentStatus: '',
+      //   orderedBy: '',
+      //   remarks: '',
+      // });
     } catch {
       setErrors(prev => ({ ...prev, submit: "Failed to save order." }));
     }

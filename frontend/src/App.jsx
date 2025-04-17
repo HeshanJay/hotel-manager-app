@@ -1,18 +1,21 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import KitchenForm from './Pages/KitchenForm';
-import KitchenSummary from './Pages/KitchenSummary';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Home from "./Pages/Home";
+import RoomBooking from "./Pages/RoomBooking";
+import EventBooking from "./Pages/EventBooking";
+import EmployeeManagement from "./Pages/EmployeeManagement";
+import KitchenForm from "./Pages/KitchenForm";
 
-
-function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<KitchenForm />} />
-        <Route path="/kitchen-summary" element={<KitchenSummary />} />
-      </Routes>
-    </Router>
-  );
-}
+const App = () => (
+  <Router>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/room‑booking" element={<RoomBooking />} />
+      <Route path="/event‑booking" element={<EventBooking />} />
+      <Route path="/employee‑management" element={<EmployeeManagement />} />
+      <Route path="/kitchenForm" element={<KitchenForm />} />
+    </Routes>
+  </Router>
+);
 
 export default App;
