@@ -1,0 +1,497 @@
+import React, { useState, useEffect } from "react";
+
+const EmployeeManagement = () => {
+  const [formData, setFormData] = useState({
+    employeeId: "",
+    fullName: "",
+    nic: "",
+    dateOfBirth: "",
+    email: "",
+    phone: "",
+    address: "",
+    department: "",
+    position: "",
+    dateOfJoining: "",
+    salary: "",
+    employmentType: "",
+    allowanceRate: "",
+    totalSalary: "",
+  });
+
+  // Add a new state to store submitted data for the popup
+  const [submittedData, setSubmittedData] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [error, setError] = useState("");
+
+  // Fetch next employee ID on component mount
+  useEffect(() => {
+    const fetchNextEmployeeId = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/employees/next-id"
+        );
+        const data = await response.json();
+        if (response.ok) {
+          setFormData((prev) => ({ ...prev, employeeId: data.employeeId }));
+        } else {
+          // Generate a fallback ID if API fails - silently without error message
+          const fallbackId = `EMP${Math.floor(Math.random() * 10000)
+            .toString()
+            .padStart(4, "0")}`;
+          setFormData((prev) => ({ ...prev, employeeId: fallbackId }));
+        }
+      } catch (error) {
+        // Generate a fallback ID if API fails - silently without error message
+        const fallbackId = `EMP${Math.floor(Math.random() * 10000)
+          .toString()
+          .padStart(4, "0")}`;
+        setFormData((prev) => ({ ...prev, employeeId: fallbackId }));
+        console.error("Error fetching employee ID:", error);
+      }
+    };
+    fetchNextEmployeeId();
+  }, []);
+
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => {
+      const updatedData = { ...prev, [name]: value };
+
+      // Calculate allowance and total salary when salary or employmentType changes
+      if (name === "salary" || name === "employmentType") {
+        const salary = Number(updatedData.salary) || 0;
+        const allowanceRate =
+          updatedData.employmentType === "Full-Time"
+            ? 0.3
+            : updatedData.employmentType === "Part-Time"
+            ? 0.15
+            : 0;
+        const allowance = salary * allowanceRate;
+        const totalSalary = salary + allowance;
+
+        return {
+          ...updatedData,
+          allowanceRate: allowance.toFixed(2),
+          totalSalary: totalSalary.toFixed(2),
+        };
+      }
+
+      return updatedData;
+    });
+  };
+
+  // Form validation
+  const validateForm = () => {
+    if (!formData.fullName) return "Full name is required";
+    if (!formData.nic) return "NIC is required";
+    if (!formData.dateOfBirth) return "Date of birth is required";
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
+      return "Valid email is required";
+    if (!formData.phone || !/^\d{10}$/.test(formData.phone))
+      return "Phone number must be 10 digits";
+    if (!formData.address) return "Address is required";
+    if (!formData.department) return "Department is required";
+    if (!formData.position) return "Position is required";
+    if (!formData.dateOfJoining) return "Date of joining is required";
+    if (
+      !formData.salary ||
+      isNaN(formData.salary) ||
+      Number(formData.salary) <= 0
+    )
+      return "Valid salary is required";
+    if (!formData.employmentType) return "Employment type is required";
+    return "";
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    setError("");
+    const validationError = validateForm();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    try {
+      const response = await fetch("http://localhost:5000/api/employees", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...formData,
+          salary: Number(formData.salary),
+          allowanceRate: Number(formData.allowanceRate),
+          totalSalary: Number(formData.totalSalary),
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        // Save the current form data for the popup before resetting
+        setSubmittedData({ ...formData });
+        setIsPopupOpen(true);
+
+        try {
+          // Fetch next employee ID for the next form - handle failure silently
+          const nextIdResponse = await fetch(
+            "http://localhost:5000/api/employees/next-id"
+          );
+          const nextIdData = await nextIdResponse.json();
+
+          // Generate new form state with either API ID or fallback ID
+          const newFormState = {
+            employeeId: nextIdResponse.ok
+              ? nextIdData.employeeId
+              : `EMP${Math.floor(Math.random() * 10000)
+                  .toString()
+                  .padStart(4, "0")}`,
+            fullName: "",
+            nic: "",
+            dateOfBirth: "",
+            email: "",
+            phone: "",
+            address: "",
+            department: "",
+            position: "",
+            dateOfJoining: "",
+            salary: "",
+            employmentType: "",
+            allowanceRate: "",
+            totalSalary: "",
+          };
+
+          setFormData(newFormState);
+        } catch (idError) {
+          // If fetching new ID fails, still reset form with fallback ID
+          const fallbackId = `EMP${Math.floor(Math.random() * 10000)
+            .toString()
+            .padStart(4, "0")}`;
+          setFormData({
+            employeeId: fallbackId,
+            fullName: "",
+            nic: "",
+            dateOfBirth: "",
+            email: "",
+            phone: "",
+            address: "",
+            department: "",
+            position: "",
+            dateOfJoining: "",
+            salary: "",
+            employmentType: "",
+            allowanceRate: "",
+            totalSalary: "",
+          });
+          console.error("Error fetching next employee ID:", idError);
+        }
+      } else {
+        setError(data.message || "Failed to create employee");
+      }
+    } catch (error) {
+      // Keep this error since it's critical for users to know their data wasn't saved
+      setError("Failed to save employee data. Please try again.");
+      console.error("Error submitting form:", error);
+    }
+  };
+
+  // Handle popup close
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSubmittedData(null);
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+      <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">
+        Employee Management
+      </h1>
+      {error && (
+        <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-lg shadow-md">
+          {error}
+        </div>
+      )}
+      <div className="bg-white p-8 rounded-xl shadow-lg space-y-6">
+        {/* Employee ID */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Employee ID
+          </label>
+          <input
+            type="text"
+            name="employeeId"
+            value={formData.employeeId}
+            readOnly
+            className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
+          />
+        </div>
+
+        {/* Full Name */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Full Name
+          </label>
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., John Doe"
+          />
+        </div>
+
+        {/* NIC */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            NIC
+          </label>
+          <input
+            type="text"
+            name="nic"
+            value={formData.nic}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., 200012345678"
+          />
+        </div>
+
+        {/* Date of Birth */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Date of Birth
+          </label>
+          <input
+            type="date"
+            name="dateOfBirth"
+            value={formData.dateOfBirth}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., john.doe@example.com"
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Phone
+          </label>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., 0712345678"
+          />
+        </div>
+
+        {/* Address */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Address
+          </label>
+          <textarea
+            name="address"
+            value={formData.address}
+            onChange={handleChange}
+            rows="2"
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., 123 Main Street, Colombo"
+          ></textarea>
+        </div>
+
+        {/* Department */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Department
+          </label>
+          <input
+            type="text"
+            name="department"
+            value={formData.department}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., HR, IT"
+          />
+        </div>
+
+        {/* Position */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Position
+          </label>
+          <input
+            type="text"
+            name="position"
+            value={formData.position}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., Manager, Developer"
+          />
+        </div>
+
+        {/* Date of Joining */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Date of Joining
+          </label>
+          <input
+            type="date"
+            name="dateOfJoining"
+            value={formData.dateOfJoining}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+          />
+        </div>
+
+        {/* Salary */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Salary
+          </label>
+          <input
+            type="number"
+            name="salary"
+            value={formData.salary}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            placeholder="e.g., 50000"
+          />
+        </div>
+
+        {/* Employment Type */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Employment Type
+          </label>
+          <select
+            name="employmentType"
+            value={formData.employmentType}
+            onChange={handleChange}
+            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+          >
+            <option value="">Select Type</option>
+            <option value="Full-Time">Full-Time</option>
+            <option value="Part-Time">Part-Time</option>
+          </select>
+        </div>
+
+        {/* Allowance */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Allowance
+          </label>
+          <input
+            type="number"
+            name="allowanceRate"
+            value={formData.allowanceRate}
+            readOnly
+            className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
+          />
+        </div>
+
+        {/* Total Salary */}
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Total Salary
+          </label>
+          <input
+            type="number"
+            name="totalSalary"
+            value={formData.totalSalary}
+            readOnly
+            className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <button
+          onClick={handleSubmit}
+          className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300"
+        >
+          Create Employee
+        </button>
+      </div>
+
+      {/* Success Popup - now using submittedData instead of formData */}
+      {isPopupOpen && submittedData && (
+        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
+            <p className="text-green-600 text-2xl font-semibold mb-6 text-center">
+              Employee Created Successfully!
+            </p>
+            <h2 className="text-2xl font-bold text-indigo-800 mb-4 text-center">
+              Employee Summary
+            </h2>
+            <div className="space-y-2 text-gray-700 text-center">
+              <p>
+                <strong>Employee ID:</strong> {submittedData.employeeId}
+              </p>
+              <p>
+                <strong>Full Name:</strong> {submittedData.fullName}
+              </p>
+              <p>
+                <strong>NIC:</strong> {submittedData.nic}
+              </p>
+              <p>
+                <strong>Date of Birth:</strong> {submittedData.dateOfBirth}
+              </p>
+              <p>
+                <strong>Email:</strong> {submittedData.email}
+              </p>
+              <p>
+                <strong>Phone:</strong> {submittedData.phone}
+              </p>
+              <p>
+                <strong>Address:</strong> {submittedData.address}
+              </p>
+              <p>
+                <strong>Department:</strong> {submittedData.department}
+              </p>
+              <p>
+                <strong>Position:</strong> {submittedData.position}
+              </p>
+              <p>
+                <strong>Date of Joining:</strong> {submittedData.dateOfJoining}
+              </p>
+              <p>
+                <strong>Salary:</strong> Rs. {submittedData.salary}
+              </p>
+              <p>
+                <strong>Employment Type:</strong> {submittedData.employmentType}
+              </p>
+              <p>
+                <strong>Allowance:</strong> Rs. {submittedData.allowanceRate}
+              </p>
+              <p>
+                <strong>Total Salary:</strong> Rs. {submittedData.totalSalary}
+              </p>
+            </div>
+            <button
+              onClick={handleClosePopup}
+              className="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default EmployeeManagement;
