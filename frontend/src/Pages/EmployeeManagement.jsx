@@ -22,6 +22,7 @@ const EmployeeManagement = () => {
   const [submittedData, setSubmittedData] = useState(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [error, setError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
 
   // Fetch next employee ID on component mount
   useEffect(() => {
@@ -55,6 +56,51 @@ const EmployeeManagement = () => {
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    // Clear previous error for this field
+    setFieldErrors((prev) => ({ ...prev, [name]: "" }));
+
+    // Field-specific validations
+    if (name === "fullName") {
+      if (value && !/^[A-Za-z\s]+$/.test(value)) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          fullName: "Full Name should contain only letters and spaces",
+        }));
+      }
+    } else if (name === "nic") {
+      if (value && !/^(\d{9}[vV]|\d{12})$/.test(value)) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          nic: "Invalid NIC",
+        }));
+      }
+    } else if (name === "email") {
+      if (
+        value &&
+        !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
+      ) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          email: "Invalid Email",
+        }));
+      }
+    } else if (name === "phone") {
+      if (value && !/^\d{10}$/.test(value)) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          phone: "Invalid Phone Number",
+        }));
+      }
+    } else if (name === "position") {
+      if (value && !/^[A-Za-z\s]+$/.test(value)) {
+        setFieldErrors((prev) => ({
+          ...prev,
+          position: "Only letters and spaces allowed",
+        }));
+      }
+    }
+
     setFormData((prev) => {
       const updatedData = { ...prev, [name]: value };
 
@@ -83,25 +129,84 @@ const EmployeeManagement = () => {
 
   // Form validation
   const validateForm = () => {
-    if (!formData.fullName) return "Full name is required";
-    if (!formData.nic) return "NIC is required";
-    if (!formData.dateOfBirth) return "Date of birth is required";
-    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email))
-      return "Valid email is required";
-    if (!formData.phone || !/^\d{10}$/.test(formData.phone))
-      return "Phone number must be 10 digits";
-    if (!formData.address) return "Address is required";
-    if (!formData.department) return "Department is required";
-    if (!formData.position) return "Position is required";
-    if (!formData.dateOfJoining) return "Date of joining is required";
+    const errors = {};
+
+    // Check fullName - required and only letters+spaces
+    if (!formData.fullName) {
+      errors.fullName = "Full name is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.fullName)) {
+      errors.fullName = "Full Name should contain only letters and spaces";
+    }
+
+    // Check NIC - required and format validation
+    if (!formData.nic) {
+      errors.nic = "NIC is required";
+    } else if (!/^(\d{9}[vV]|\d{12})$/.test(formData.nic)) {
+      errors.nic = "Invalid NIC";
+    }
+
+    // Date of Birth validation
+    if (!formData.dateOfBirth) {
+      errors.dateOfBirth = "Date of birth is required";
+    }
+
+    // Email validation
+    if (!formData.email) {
+      errors.email = "Email is required";
+    } else if (
+      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(formData.email)
+    ) {
+      errors.email = "Invalid Email";
+    }
+
+    // Phone validation
+    if (!formData.phone) {
+      errors.phone = "Phone number is required";
+    } else if (!/^\d{10}$/.test(formData.phone)) {
+      errors.phone = "Invalid Phone Number";
+    }
+
+    // Address validation
+    if (!formData.address) {
+      errors.address = "Address is required";
+    }
+
+    // Department validation
+    if (!formData.department) {
+      errors.department = "Department is required";
+    }
+
+    // Position validation
+    if (!formData.position) {
+      errors.position = "Position is required";
+    } else if (!/^[A-Za-z\s]+$/.test(formData.position)) {
+      errors.position = "Only letters and spaces allowed";
+    }
+
+    // Date of Joining validation
+    if (!formData.dateOfJoining) {
+      errors.dateOfJoining = "Date of joining is required";
+    }
+
+    // Salary validation
     if (
       !formData.salary ||
       isNaN(formData.salary) ||
       Number(formData.salary) <= 0
-    )
-      return "Valid salary is required";
-    if (!formData.employmentType) return "Employment type is required";
-    return "";
+    ) {
+      errors.salary = "Valid salary is required";
+    }
+
+    // Employment Type validation
+    if (!formData.employmentType) {
+      errors.employmentType = "Employment type is required";
+    }
+
+    setFieldErrors(errors);
+
+    // Return the first error message for general form error, or empty string if no errors
+    const errorValues = Object.values(errors);
+    return errorValues.length > 0 ? errorValues[0] : "";
   };
 
   // Handle form submission
@@ -161,6 +266,7 @@ const EmployeeManagement = () => {
           };
 
           setFormData(newFormState);
+          setFieldErrors({});
         } catch (idError) {
           // If fetching new ID fails, still reset form with fallback ID
           const fallbackId = `EMP${Math.floor(Math.random() * 10000)
@@ -182,6 +288,7 @@ const EmployeeManagement = () => {
             allowanceRate: "",
             totalSalary: "",
           });
+          setFieldErrors({});
           console.error("Error fetching next employee ID:", idError);
         }
       } else {
@@ -199,6 +306,20 @@ const EmployeeManagement = () => {
     setIsPopupOpen(false);
     setSubmittedData(null);
   };
+
+  // Error message component for reuse
+  const ErrorMessage = ({ message }) => (
+    <div className="mt-1 flex items-center text-sm text-red-600">
+      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fillRule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+          clipRule="evenodd"
+        />
+      </svg>
+      {message}
+    </div>
+  );
 
   return (
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
@@ -235,9 +356,14 @@ const EmployeeManagement = () => {
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            className={`w-full p-3 rounded-md border ${
+              fieldErrors.fullName ? "border-red-500" : "border-gray-300"
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             placeholder="e.g., John Doe"
           />
+          {fieldErrors.fullName && (
+            <ErrorMessage message={fieldErrors.fullName} />
+          )}
         </div>
 
         {/* NIC */}
@@ -250,9 +376,12 @@ const EmployeeManagement = () => {
             name="nic"
             value={formData.nic}
             onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-            placeholder="e.g., 200012345678"
+            className={`w-full p-3 rounded-md border ${
+              fieldErrors.nic ? "border-red-500" : "border-gray-300"
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+            placeholder="e.g., 200012345678 or 123456789V"
           />
+          {fieldErrors.nic && <ErrorMessage message={fieldErrors.nic} />}
         </div>
 
         {/* Date of Birth */}
@@ -279,9 +408,12 @@ const EmployeeManagement = () => {
             name="email"
             value={formData.email}
             onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            className={`w-full p-3 rounded-md border ${
+              fieldErrors.email ? "border-red-500" : "border-gray-300"
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             placeholder="e.g., john.doe@example.com"
           />
+          {fieldErrors.email && <ErrorMessage message={fieldErrors.email} />}
         </div>
 
         {/* Phone */}
@@ -294,9 +426,12 @@ const EmployeeManagement = () => {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            className={`w-full p-3 rounded-md border ${
+              fieldErrors.phone ? "border-red-500" : "border-gray-300"
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             placeholder="e.g., 0712345678"
           />
+          {fieldErrors.phone && <ErrorMessage message={fieldErrors.phone} />}
         </div>
 
         {/* Address */}
@@ -314,19 +449,39 @@ const EmployeeManagement = () => {
           ></textarea>
         </div>
 
-        {/* Department */}
+        {/* Department - Updated to use a dropdown */}
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Department
           </label>
-          <input
-            type="text"
+          <select
             name="department"
             value={formData.department}
             onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-            placeholder="e.g., HR, IT"
-          />
+            className={`w-full p-3 rounded-md border ${
+              fieldErrors.department ? "border-red-500" : "border-gray-300"
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+          >
+            <option value="">Select Department</option>
+            <option value="Front Office Department">
+              Front Office Department
+            </option>
+            <option value="Housekeeping Department">
+              Housekeeping Department
+            </option>
+            <option value="Kitchen / Food Production Department">
+              Kitchen / Food Production Department
+            </option>
+            <option value="Human Resources Department">
+              Human Resources Department
+            </option>
+            <option value="Information Technology (IT)">
+              Information Technology (IT)
+            </option>
+          </select>
+          {fieldErrors.department && (
+            <ErrorMessage message={fieldErrors.department} />
+          )}
         </div>
 
         {/* Position */}
@@ -339,9 +494,14 @@ const EmployeeManagement = () => {
             name="position"
             value={formData.position}
             onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            className={`w-full p-3 rounded-md border ${
+              fieldErrors.position ? "border-red-500" : "border-gray-300"
+            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             placeholder="e.g., Manager, Developer"
           />
+          {fieldErrors.position && (
+            <ErrorMessage message={fieldErrors.position} />
+          )}
         </div>
 
         {/* Date of Joining */}
@@ -427,17 +587,19 @@ const EmployeeManagement = () => {
         </button>
       </div>
 
-      {/* Success Popup - now using submittedData instead of formData */}
+      {/* Success Popup with Scrollable Content */}
       {isPopupOpen && submittedData && (
         <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
-            <p className="text-green-600 text-2xl font-semibold mb-6 text-center">
+          <div className="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full max-h-3/4">
+            <p className="text-green-600 text-2xl font-semibold mb-4 text-center">
               Employee Created Successfully!
             </p>
-            <h2 className="text-2xl font-bold text-indigo-800 mb-4 text-center">
+            <h2 className="text-xl font-bold text-indigo-800 mb-3 text-center">
               Employee Summary
             </h2>
-            <div className="space-y-2 text-gray-700 text-center">
+
+            {/* Scrollable content area */}
+            <div className="overflow-y-auto max-h-60 pr-2 space-y-2 text-gray-700">
               <p>
                 <strong>Employee ID:</strong> {submittedData.employeeId}
               </p>
@@ -481,9 +643,10 @@ const EmployeeManagement = () => {
                 <strong>Total Salary:</strong> Rs. {submittedData.totalSalary}
               </p>
             </div>
+
             <button
               onClick={handleClosePopup}
-              className="mt-6 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
+              className="mt-5 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
             >
               Close
             </button>
