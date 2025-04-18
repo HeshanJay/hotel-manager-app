@@ -322,337 +322,341 @@ const EmployeeManagement = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">
-        Employee Management
-      </h1>
-      {error && (
-        <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-lg shadow-md">
-          {error}
-        </div>
-      )}
-      <div className="bg-white p-8 rounded-xl shadow-lg space-y-6">
-        {/* Employee ID */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Employee ID
-          </label>
-          <input
-            type="text"
-            name="employeeId"
-            value={formData.employeeId}
-            readOnly
-            className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
-          />
-        </div>
-
-        {/* Full Name */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Full Name
-          </label>
-          <input
-            type="text"
-            name="fullName"
-            value={formData.fullName}
-            onChange={handleChange}
-            className={`w-full p-3 rounded-md border ${
-              fieldErrors.fullName ? "border-red-500" : "border-gray-300"
-            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
-            placeholder="e.g., John Doe"
-          />
-          {fieldErrors.fullName && (
-            <ErrorMessage message={fieldErrors.fullName} />
-          )}
-        </div>
-
-        {/* NIC */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            NIC
-          </label>
-          <input
-            type="text"
-            name="nic"
-            value={formData.nic}
-            onChange={handleChange}
-            className={`w-full p-3 rounded-md border ${
-              fieldErrors.nic ? "border-red-500" : "border-gray-300"
-            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
-            placeholder="e.g., 200012345678 or 123456789V"
-          />
-          {fieldErrors.nic && <ErrorMessage message={fieldErrors.nic} />}
-        </div>
-
-        {/* Date of Birth */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Date of Birth
-          </label>
-          <input
-            type="date"
-            name="dateOfBirth"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-          />
-        </div>
-
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Email
-          </label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className={`w-full p-3 rounded-md border ${
-              fieldErrors.email ? "border-red-500" : "border-gray-300"
-            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
-            placeholder="e.g., john.doe@example.com"
-          />
-          {fieldErrors.email && <ErrorMessage message={fieldErrors.email} />}
-        </div>
-
-        {/* Phone */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Phone
-          </label>
-          <input
-            type="tel"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            className={`w-full p-3 rounded-md border ${
-              fieldErrors.phone ? "border-red-500" : "border-gray-300"
-            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
-            placeholder="e.g., 0712345678"
-          />
-          {fieldErrors.phone && <ErrorMessage message={fieldErrors.phone} />}
-        </div>
-
-        {/* Address */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Address
-          </label>
-          <textarea
-            name="address"
-            value={formData.address}
-            onChange={handleChange}
-            rows="2"
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-            placeholder="e.g., 123 Main Street, Colombo"
-          ></textarea>
-        </div>
-
-        {/* Department - Updated to use a dropdown */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Department
-          </label>
-          <select
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            className={`w-full p-3 rounded-md border ${
-              fieldErrors.department ? "border-red-500" : "border-gray-300"
-            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
-          >
-            <option value="">Select Department</option>
-            <option value="Front Office Department">
-              Front Office Department
-            </option>
-            <option value="Housekeeping Department">
-              Housekeeping Department
-            </option>
-            <option value="Kitchen / Food Production Department">
-              Kitchen / Food Production Department
-            </option>
-            <option value="Human Resources Department">
-              Human Resources Department
-            </option>
-            <option value="Information Technology (IT)">
-              Information Technology (IT)
-            </option>
-          </select>
-          {fieldErrors.department && (
-            <ErrorMessage message={fieldErrors.department} />
-          )}
-        </div>
-
-        {/* Position */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Position
-          </label>
-          <input
-            type="text"
-            name="position"
-            value={formData.position}
-            onChange={handleChange}
-            className={`w-full p-3 rounded-md border ${
-              fieldErrors.position ? "border-red-500" : "border-gray-300"
-            } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
-            placeholder="e.g., Manager, Developer"
-          />
-          {fieldErrors.position && (
-            <ErrorMessage message={fieldErrors.position} />
-          )}
-        </div>
-
-        {/* Date of Joining */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Date of Joining
-          </label>
-          <input
-            type="date"
-            name="dateOfJoining"
-            value={formData.dateOfJoining}
-            onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-          />
-        </div>
-
-        {/* Salary */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Salary
-          </label>
-          <input
-            type="number"
-            name="salary"
-            value={formData.salary}
-            onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-            placeholder="e.g., 50000"
-          />
-        </div>
-
-        {/* Employment Type */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Employment Type
-          </label>
-          <select
-            name="employmentType"
-            value={formData.employmentType}
-            onChange={handleChange}
-            className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
-          >
-            <option value="">Select Type</option>
-            <option value="Full-Time">Full-Time</option>
-            <option value="Part-Time">Part-Time</option>
-          </select>
-        </div>
-
-        {/* Allowance */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Allowance
-          </label>
-          <input
-            type="number"
-            name="allowanceRate"
-            value={formData.allowanceRate}
-            readOnly
-            className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
-          />
-        </div>
-
-        {/* Total Salary */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Total Salary
-          </label>
-          <input
-            type="number"
-            name="totalSalary"
-            value={formData.totalSalary}
-            readOnly
-            className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
-          />
-        </div>
-
-        {/* Submit Button */}
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300"
-        >
-          Create Employee
-        </button>
-      </div>
-
-      {/* Success Popup with Scrollable Content */}
-      {isPopupOpen && submittedData && (
-        <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full max-h-3/4">
-            <p className="text-green-600 text-2xl font-semibold mb-4 text-center">
-              Employee Created Successfully!
-            </p>
-            <h2 className="text-xl font-bold text-indigo-800 mb-3 text-center">
-              Employee Summary
-            </h2>
-
-            {/* Scrollable content area */}
-            <div className="overflow-y-auto max-h-60 pr-2 space-y-2 text-gray-700">
-              <p>
-                <strong>Employee ID:</strong> {submittedData.employeeId}
-              </p>
-              <p>
-                <strong>Full Name:</strong> {submittedData.fullName}
-              </p>
-              <p>
-                <strong>NIC:</strong> {submittedData.nic}
-              </p>
-              <p>
-                <strong>Date of Birth:</strong> {submittedData.dateOfBirth}
-              </p>
-              <p>
-                <strong>Email:</strong> {submittedData.email}
-              </p>
-              <p>
-                <strong>Phone:</strong> {submittedData.phone}
-              </p>
-              <p>
-                <strong>Address:</strong> {submittedData.address}
-              </p>
-              <p>
-                <strong>Department:</strong> {submittedData.department}
-              </p>
-              <p>
-                <strong>Position:</strong> {submittedData.position}
-              </p>
-              <p>
-                <strong>Date of Joining:</strong> {submittedData.dateOfJoining}
-              </p>
-              <p>
-                <strong>Salary:</strong> Rs. {submittedData.salary}
-              </p>
-              <p>
-                <strong>Employment Type:</strong> {submittedData.employmentType}
-              </p>
-              <p>
-                <strong>Allowance:</strong> Rs. {submittedData.allowanceRate}
-              </p>
-              <p>
-                <strong>Total Salary:</strong> Rs. {submittedData.totalSalary}
-              </p>
-            </div>
-
-            <button
-              onClick={handleClosePopup}
-              className="mt-5 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
-            >
-              Close
-            </button>
+    <div className="ml-64 pt-16 min-h-screen bg-gray-50">
+      <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
+        <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">
+          Employee Management
+        </h1>
+        {error && (
+          <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-lg shadow-md">
+            {error}
           </div>
+        )}
+        <div className="bg-white p-8 rounded-xl shadow-lg space-y-6">
+          {/* Employee ID */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Employee ID
+            </label>
+            <input
+              type="text"
+              name="employeeId"
+              value={formData.employeeId}
+              readOnly
+              className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
+            />
+          </div>
+
+          {/* Full Name */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Full Name
+            </label>
+            <input
+              type="text"
+              name="fullName"
+              value={formData.fullName}
+              onChange={handleChange}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.fullName ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+              placeholder="e.g., John Doe"
+            />
+            {fieldErrors.fullName && (
+              <ErrorMessage message={fieldErrors.fullName} />
+            )}
+          </div>
+
+          {/* NIC */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              NIC
+            </label>
+            <input
+              type="text"
+              name="nic"
+              value={formData.nic}
+              onChange={handleChange}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.nic ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+              placeholder="e.g., 200012345678 or 123456789V"
+            />
+            {fieldErrors.nic && <ErrorMessage message={fieldErrors.nic} />}
+          </div>
+
+          {/* Date of Birth */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Date of Birth
+            </label>
+            <input
+              type="date"
+              name="dateOfBirth"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            />
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.email ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+              placeholder="e.g., john.doe@example.com"
+            />
+            {fieldErrors.email && <ErrorMessage message={fieldErrors.email} />}
+          </div>
+
+          {/* Phone */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Phone
+            </label>
+            <input
+              type="tel"
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.phone ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+              placeholder="e.g., 0712345678"
+            />
+            {fieldErrors.phone && <ErrorMessage message={fieldErrors.phone} />}
+          </div>
+
+          {/* Address */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Address
+            </label>
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              rows="2"
+              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              placeholder="e.g., 123 Main Street, Colombo"
+            ></textarea>
+          </div>
+
+          {/* Department - Updated to use a dropdown */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Department
+            </label>
+            <select
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.department ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+            >
+              <option value="">Select Department</option>
+              <option value="Front Office Department">
+                Front Office Department
+              </option>
+              <option value="Housekeeping Department">
+                Housekeeping Department
+              </option>
+              <option value="Kitchen / Food Production Department">
+                Kitchen / Food Production Department
+              </option>
+              <option value="Human Resources Department">
+                Human Resources Department
+              </option>
+              <option value="Information Technology (IT)">
+                Information Technology (IT)
+              </option>
+            </select>
+            {fieldErrors.department && (
+              <ErrorMessage message={fieldErrors.department} />
+            )}
+          </div>
+
+          {/* Position */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Position
+            </label>
+            <input
+              type="text"
+              name="position"
+              value={formData.position}
+              onChange={handleChange}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.position ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
+              placeholder="e.g., Manager, Developer"
+            />
+            {fieldErrors.position && (
+              <ErrorMessage message={fieldErrors.position} />
+            )}
+          </div>
+
+          {/* Date of Joining */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Date of Joining
+            </label>
+            <input
+              type="date"
+              name="dateOfJoining"
+              value={formData.dateOfJoining}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            />
+          </div>
+
+          {/* Salary */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Salary
+            </label>
+            <input
+              type="number"
+              name="salary"
+              value={formData.salary}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              placeholder="e.g., 50000"
+            />
+          </div>
+
+          {/* Employment Type */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Employment Type
+            </label>
+            <select
+              name="employmentType"
+              value={formData.employmentType}
+              onChange={handleChange}
+              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+            >
+              <option value="">Select Type</option>
+              <option value="Full-Time">Full-Time</option>
+              <option value="Part-Time">Part-Time</option>
+            </select>
+          </div>
+
+          {/* Allowance */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Allowance
+            </label>
+            <input
+              type="number"
+              name="allowanceRate"
+              value={formData.allowanceRate}
+              readOnly
+              className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
+            />
+          </div>
+
+          {/* Total Salary */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Total Salary
+            </label>
+            <input
+              type="number"
+              name="totalSalary"
+              value={formData.totalSalary}
+              readOnly
+              className="w-full p-3 rounded-md border border-gray-300 bg-gray-100 cursor-not-allowed"
+            />
+          </div>
+
+          {/* Submit Button */}
+          <button
+            onClick={handleSubmit}
+            className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300"
+          >
+            Create Employee
+          </button>
         </div>
-      )}
+
+        {/* Success Popup with Scrollable Content */}
+        {isPopupOpen && submittedData && (
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full max-h-3/4">
+              <p className="text-green-600 text-2xl font-semibold mb-4 text-center">
+                Employee Created Successfully!
+              </p>
+              <h2 className="text-xl font-bold text-indigo-800 mb-3 text-center">
+                Employee Summary
+              </h2>
+
+              {/* Scrollable content area */}
+              <div className="overflow-y-auto max-h-60 pr-2 space-y-2 text-gray-700">
+                <p>
+                  <strong>Employee ID:</strong> {submittedData.employeeId}
+                </p>
+                <p>
+                  <strong>Full Name:</strong> {submittedData.fullName}
+                </p>
+                <p>
+                  <strong>NIC:</strong> {submittedData.nic}
+                </p>
+                <p>
+                  <strong>Date of Birth:</strong> {submittedData.dateOfBirth}
+                </p>
+                <p>
+                  <strong>Email:</strong> {submittedData.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {submittedData.phone}
+                </p>
+                <p>
+                  <strong>Address:</strong> {submittedData.address}
+                </p>
+                <p>
+                  <strong>Department:</strong> {submittedData.department}
+                </p>
+                <p>
+                  <strong>Position:</strong> {submittedData.position}
+                </p>
+                <p>
+                  <strong>Date of Joining:</strong>{" "}
+                  {submittedData.dateOfJoining}
+                </p>
+                <p>
+                  <strong>Salary:</strong> Rs. {submittedData.salary}
+                </p>
+                <p>
+                  <strong>Employment Type:</strong>{" "}
+                  {submittedData.employmentType}
+                </p>
+                <p>
+                  <strong>Allowance:</strong> Rs. {submittedData.allowanceRate}
+                </p>
+                <p>
+                  <strong>Total Salary:</strong> Rs. {submittedData.totalSalary}
+                </p>
+              </div>
+
+              <button
+                onClick={handleClosePopup}
+                className="mt-5 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
