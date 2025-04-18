@@ -5,13 +5,14 @@ import RoomBooking from "./Pages/RoomBooking";
 import EventBooking from "./Pages/EventBooking";
 import EmployeeManagement from "./Pages/EmployeeManagement";
 import KitchenForm from "./Pages/KitchenForm";
+import Login from "./Pages/Login";
 
 const App = () => {
   return (
     <div>
       <Router>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Login />} />
         </Routes>
         <Routes>
           <Route path="/room-booking" element={<RoomBooking />} />
