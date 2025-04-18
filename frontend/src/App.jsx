@@ -36,9 +36,36 @@ const App = () => {
               </div>
             }
           />
-          <Route path="/event-booking" element={<EventBooking />} />
-          <Route path="/employee-management" element={<EmployeeManagement />} />
-          <Route path="/kitchenForm" element={<KitchenForm />} />
+          <Route
+            path="/event-booking"
+            element={
+              <div className="relative min-h-screen bg-gray-50">
+                <Sidebar />
+                <Navbar />
+                <EventBooking />
+              </div>
+            }
+          />
+          <Route
+            path="/employee-management"
+            element={
+              <div className="relative min-h-screen bg-gray-50">
+                <Sidebar />
+                <Navbar />
+                <EmployeeManagement />
+              </div>
+            }
+          />
+          <Route
+            path="/kitchenForm"
+            element={
+              <div className="relative min-h-screen bg-gray-50">
+                <Sidebar />
+                <Navbar />
+                <KitchenForm />
+              </div>
+            }
+          />
         </Routes>
       </Router>
     </div>

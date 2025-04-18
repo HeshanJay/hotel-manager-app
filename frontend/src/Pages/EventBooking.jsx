@@ -90,6 +90,7 @@ const EventBooking = () => {
   const totalCost = calculateTotalCost();
 
   return (
+    <div className="ml-64 pt-16 min-h-screen bg-gray-50">
     <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
       <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">Book Your Event</h1>
       {error && (
@@ -259,6 +260,7 @@ const EventBooking = () => {
           </div>
         </div>
       )}
+    </div>
     </div>
   );
 };
