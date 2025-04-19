@@ -10,7 +10,7 @@ import {
 
 const Sidebar = () => {
   const menuItems = [
-    { name: "Dashboard", icon: <FaHome />, path: "/" }, // Added Dashboard
+    { name: "Dashboard", icon: <FaHome />, path: "/dashboard" }, // Added Dashboard
     { name: "Room Booking", icon: <FaBed />, path: "/room-booking" },
     { name: "Event Booking", icon: <FaCalendarAlt />, path: "/event-booking" },
     { name: "Kitchen Items", icon: <FaUtensils />, path: "/kitchenForm" },
