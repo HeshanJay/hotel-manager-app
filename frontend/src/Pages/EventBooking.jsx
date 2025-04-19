@@ -46,13 +46,19 @@ const EventBooking = () => {
     if (eventDate < today) return "Event date must be in the future";
     if (!formData.startTime) return "Start time is required";
     if (!formData.endTime) return "End time is required";
-    if (formData.startTime >= formData.endTime) return "End time must be after start time";
-    if (!formData.numberOfGuests || formData.numberOfGuests < 1) return "Number of guests must be at least 1";
-    if (formData.numberOfGuests > 1000) return "Number of guests cannot exceed 1000";
+    if (formData.startTime >= formData.endTime)
+      return "End time must be after start time";
+    if (!formData.numberOfGuests || formData.numberOfGuests < 1)
+      return "Number of guests must be at least 1";
+    if (formData.numberOfGuests > 1000)
+      return "Number of guests cannot exceed 1000";
     if (!formData.contactName) return "Contact name is required";
-    if (!formData.contactEmail || !/\S+@\S+\.\S+/.test(formData.contactEmail)) return "Valid email is required";
-    if (!formData.contactPhone || !/^\d{10}$/.test(formData.contactPhone)) return "Phone number must be 10 digits";
-    if (!formData.agreeTerms) return "You must agree to the terms and conditions";
+    if (!formData.contactEmail || !/\S+@\S+\.\S+/.test(formData.contactEmail))
+      return "Valid email is required";
+    if (!formData.contactPhone || !/^\d{10}$/.test(formData.contactPhone))
+      return "Phone number must be 10 digits";
+    if (!formData.agreeTerms)
+      return "You must agree to the terms and conditions";
     return "";
   };
 
@@ -68,7 +74,14 @@ const EventBooking = () => {
       console.log("hourDiff:", hourDiff); // Debug log
       durationCost = hourDiff > 0 ? hourDiff * 8000 : 0;
     }
-    console.log("baseCost:", baseCost, "guestsCost:", guestsCost, "durationCost:", durationCost); // Debug log
+    console.log(
+      "baseCost:",
+      baseCost,
+      "guestsCost:",
+      guestsCost,
+      "durationCost:",
+      durationCost
+    ); // Debug log
     return baseCost + guestsCost + durationCost;
   };
 
@@ -103,14 +116,21 @@ const EventBooking = () => {
   const totalCost = calculateTotalCost();
 
   return (
+    <div className="ml-64 pt-16 min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
-        <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">Book Your Event</h1>
+        <h1 className="text-4xl font-extrabold text-indigo-800 mb-8 text-center">
+          Book Your Event
+        </h1>
         {error && (
-          <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-lg shadow-md">{error}</div>
+          <div className="mb-6 p-4 bg-red-100 text-red-800 rounded-lg shadow-md">
+            {error}
+          </div>
         )}
         <div className="bg-white p-8 rounded-xl shadow-lg space-y-6">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Event Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Event Name
+            </label>
             <input
               type="text"
               name="eventName"
@@ -121,7 +141,9 @@ const EventBooking = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Event Type</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Event Type
+            </label>
             <select
               name="eventType"
               value={formData.eventType}
@@ -136,7 +158,9 @@ const EventBooking = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Event Date</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Event Date
+            </label>
             <input
               type="date"
               name="eventDate"
@@ -147,7 +171,9 @@ const EventBooking = () => {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Start Time</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Start Time
+              </label>
               <input
                 type="time"
                 name="startTime"
@@ -157,7 +183,9 @@ const EventBooking = () => {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">End Time</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                End Time
+              </label>
               <input
                 type="time"
                 name="endTime"
@@ -168,7 +196,9 @@ const EventBooking = () => {
             </div>
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Number of Guests</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Number of Guests
+            </label>
             <input
               type="number"
               name="numberOfGuests"
@@ -181,7 +211,9 @@ const EventBooking = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Contact Name</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Contact Name
+            </label>
             <input
               type="text"
               name="contactName"
@@ -192,7 +224,9 @@ const EventBooking = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Contact Email</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Contact Email
+            </label>
             <input
               type="email"
               name="contactEmail"
@@ -203,7 +237,9 @@ const EventBooking = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Contact Phone</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Contact Phone
+            </label>
             <input
               type="tel"
               name="contactPhone"
@@ -214,7 +250,9 @@ const EventBooking = () => {
             />
           </div>
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">Special Requests</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Special Requests
+            </label>
             <textarea
               name="specialRequests"
               value={formData.specialRequests}
@@ -232,7 +270,9 @@ const EventBooking = () => {
               onChange={handleChange}
               className="h-5 w-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
             />
-            <label className="ml-2 text-sm text-gray-700">I agree to the terms and conditions</label>
+            <label className="ml-2 text-sm text-gray-700">
+              I agree to the terms and conditions
+            </label>
           </div>
           <button
             onClick={handleSubmit}
@@ -243,25 +283,55 @@ const EventBooking = () => {
         </div>
         {totalCost > 0 && (
           <div className="mt-6 text-center">
-            <p className="text-lg font-medium text-gray-800">Estimated Total Cost: Rs {totalCost.toFixed(2)}</p>
+            <p className="text-lg font-medium text-gray-800">
+              Estimated Total Cost: Rs {totalCost.toFixed(2)}
+            </p>
           </div>
         )}
         {isPopupOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
             <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
-              <p className="text-green-600 text-2xl font-semibold mb-6 text-center">Event Booking Successful!</p>
-              <h2 className="text-2xl font-bold text-indigo-800 mb-4">Booking Summary</h2>
+              <p className="text-green-600 text-2xl font-semibold mb-6 text-center">
+                Event Booking Successful!
+              </p>
+              <h2 className="text-2xl font-bold text-indigo-800 mb-4">
+                Booking Summary
+              </h2>
               <div className="space-y-2 text-gray-700">
-                <p><strong>Event Name:</strong> {formData.eventName}</p>
-                <p><strong>Event Type:</strong> {formData.eventType}</p>
-                <p><strong>Date:</strong> {formData.eventDate}</p>
-                <p><strong>Time:</strong> {formData.startTime} - {formData.endTime}</p>
-                <p><strong>Guests:</strong> {formData.numberOfGuests}</p>
-                <p><strong>Contact:</strong> {formData.contactName}</p>
-                <p><strong>Email:</strong> {formData.contactEmail}</p>
-                <p><strong>Phone:</strong> {formData.contactPhone}</p>
-                {formData.specialRequests && <p><strong>Special Requests:</strong> {formData.specialRequests}</p>}
-                <p><strong>Total Cost:</strong> Rs {totalCost.toFixed(2)}</p>
+                <p>
+                  <strong>Event Name:</strong> {formData.eventName}
+                </p>
+                <p>
+                  <strong>Event Type:</strong> {formData.eventType}
+                </p>
+                <p>
+                  <strong>Date:</strong> {formData.eventDate}
+                </p>
+                <p>
+                  <strong>Time:</strong> {formData.startTime} -{" "}
+                  {formData.endTime}
+                </p>
+                <p>
+                  <strong>Guests:</strong> {formData.numberOfGuests}
+                </p>
+                <p>
+                  <strong>Contact:</strong> {formData.contactName}
+                </p>
+                <p>
+                  <strong>Email:</strong> {formData.contactEmail}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {formData.contactPhone}
+                </p>
+                {formData.specialRequests && (
+                  <p>
+                    <strong>Special Requests:</strong>{" "}
+                    {formData.specialRequests}
+                  </p>
+                )}
+                <p>
+                  <strong>Total Cost:</strong> Rs {totalCost.toFixed(2)}
+                </p>
               </div>
               <button
                 onClick={() => setIsPopupOpen(false)}
@@ -273,6 +343,7 @@ const EventBooking = () => {
           </div>
         )}
       </div>
+    </div>
   );
 };
 
