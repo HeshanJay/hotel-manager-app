@@ -5,6 +5,7 @@ import RoomBooking from "./Pages/RoomBooking";
 import EventBooking from "./Pages/EventBooking";
 import EmployeeManagement from "./Pages/EmployeeManagement";
 import KitchenForm from "./Pages/KitchenForm";
+import Login from "./Pages/Login";
 import Dashboard from "./Pages/Dashboard";
 import Sidebar from "./Components/Sidebar";
 import Navbar from "./Components/Navbar";
@@ -14,6 +15,7 @@ const App = () => {
     <div>
       <Router>
         <Routes>
+          <Route path="/event" element={<Login />} />
           <Route
             path="/"
             element={
