@@ -15,9 +15,9 @@ const App = () => {
     <div>
       <Router>
         <Routes>
-          <Route path="/event" element={<Login />} />
+        <Route path="/" element={<Login />} />
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <div className="relative min-h-screen bg-gray-50">
                 <Sidebar />

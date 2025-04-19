@@ -15,7 +15,7 @@ const Login = () => {
 
     if (username === hardcodedUsername && password === hardcodedPassword) {
       setError("");
-      navigate("/event-booking");
+      navigate("/dashboard");
     } else {
       setError("Invalid username or password");
     }
