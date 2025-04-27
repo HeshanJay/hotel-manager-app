@@ -301,7 +301,9 @@ const RoomBooking = () => {
                   name="fullName"
                   value={formData.fullName}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.fullName ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                   placeholder="e.g., Nimsara Perera"
                 />
                 {errors.fullName && (
@@ -334,7 +336,9 @@ const RoomBooking = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                   placeholder="e.g., abcd@example.com"
                 />
                 {errors.email && (
@@ -367,7 +371,9 @@ const RoomBooking = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.phone ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                   placeholder="e.g., +94 77 123 4567"
                 />
                 {errors.phone && (
@@ -403,7 +409,9 @@ const RoomBooking = () => {
                     name="address1"
                     value={formData.address1}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.address1 ? "border-red-500" : "border-gray-300"
+                    } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                     placeholder="e.g., No. 12, Temple Road"
                   />
                   {errors.address1 && (
@@ -470,7 +478,9 @@ const RoomBooking = () => {
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.state ? "border-red-500" : "border-gray-300"
+                    } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                     placeholder="e.g., Western Province"
                   />
                   {errors.state && (
@@ -503,7 +513,9 @@ const RoomBooking = () => {
                     name="zip"
                     value={formData.zip}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.zip ? "border-red-500" : "border-gray-300"
+                    } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                     placeholder="e.g., 10200"
                   />
                   {errors.zip && (
@@ -536,7 +548,9 @@ const RoomBooking = () => {
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                    className={`w-full px-4 py-3 rounded-lg border ${
+                      errors.country ? "border-red-500" : "border-gray-300"
+                    } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                     placeholder="e.g., Sri Lanka"
                   />
                   {errors.country && (
@@ -582,7 +596,9 @@ const RoomBooking = () => {
                   name="checkIn"
                   value={formData.checkIn}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.checkIn ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                 />
                 {errors.checkIn && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -614,7 +630,9 @@ const RoomBooking = () => {
                   name="checkOut"
                   value={formData.checkOut}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.checkOut ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                 />
                 {errors.checkOut && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -647,7 +665,9 @@ const RoomBooking = () => {
                   value={formData.adults}
                   onChange={handleChange}
                   min="1"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.adults ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                 />
                 {errors.adults && (
                   <p className="mt-1 text-sm text-red-600 flex items-center">
@@ -711,7 +731,9 @@ const RoomBooking = () => {
                   name="roomType"
                   value={formData.roomType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
+                  className={`w-full px-4 py-3 rounded-lg border ${
+                    errors.roomType ? "border-red-500" : "border-gray-300"
+                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
                 >
                   <option value="">Select Room Type</option>
                   <option value="standard">Standard Room</option>
