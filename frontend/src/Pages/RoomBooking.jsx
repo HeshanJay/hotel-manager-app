@@ -958,7 +958,7 @@ const RoomBooking = () => {
           </button>
         </div>
         {isPopupOpen && (
-          <div className="fixed inset-0 bg-black/80 flex justify-center items-end z-1000">
+          <div className="fixed inset-0 bg-black/70 flex justify-center items-end z-1000">
             <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full ml-8 mb-15">
               <div className="text-center mb-6">
                 <svg
