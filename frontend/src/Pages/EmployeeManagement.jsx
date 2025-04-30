@@ -75,6 +75,19 @@ const EmployeeManagement = () => {
           nic: "Invalid NIC",
         }));
       }
+    } else if (name === "dateOfBirth") {
+      // Check if the date is in the future
+      if (value) {
+        const selectedDate = new Date(value);
+        const today = new Date();
+
+        if (selectedDate > today) {
+          setFieldErrors((prev) => ({
+            ...prev,
+            dateOfBirth: "Future dates cannot be included",
+          }));
+        }
+      }
     } else if (name === "email") {
       if (
         value &&
@@ -148,6 +161,14 @@ const EmployeeManagement = () => {
     // Date of Birth validation
     if (!formData.dateOfBirth) {
       errors.dateOfBirth = "Date of birth is required";
+    } else {
+      // Check if the date is in the future
+      const selectedDate = new Date(formData.dateOfBirth);
+      const today = new Date();
+
+      if (selectedDate > today) {
+        errors.dateOfBirth = "Invalid DOB";
+      }
     }
 
     // Email validation
@@ -321,6 +342,16 @@ const EmployeeManagement = () => {
     </div>
   );
 
+  // Format date for display in the popup
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString();
+  };
+
+  // Get today's date in yyyy-mm-dd format for the max attribute
+  const today = new Date().toISOString().split("T")[0];
+
   return (
     <div className="ml-64 pt-16 min-h-screen bg-gray-50">
       <div className="max-w-4xl mx-auto p-6 bg-gray-50 min-h-screen">
@@ -395,8 +426,14 @@ const EmployeeManagement = () => {
               name="dateOfBirth"
               value={formData.dateOfBirth}
               onChange={handleChange}
-              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              max={today}
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.dateOfBirth ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             />
+            {fieldErrors.dateOfBirth && (
+              <ErrorMessage message={fieldErrors.dateOfBirth} />
+            )}
           </div>
 
           {/* Email */}
@@ -445,9 +482,14 @@ const EmployeeManagement = () => {
               value={formData.address}
               onChange={handleChange}
               rows="2"
-              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.address ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
               placeholder="e.g., 123 Main Street, Colombo"
             ></textarea>
+            {fieldErrors.address && (
+              <ErrorMessage message={fieldErrors.address} />
+            )}
           </div>
 
           {/* Department - Updated to use a dropdown */}
@@ -515,8 +557,13 @@ const EmployeeManagement = () => {
               name="dateOfJoining"
               value={formData.dateOfJoining}
               onChange={handleChange}
-              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.dateOfJoining ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             />
+            {fieldErrors.dateOfJoining && (
+              <ErrorMessage message={fieldErrors.dateOfJoining} />
+            )}
           </div>
 
           {/* Salary */}
@@ -529,9 +576,14 @@ const EmployeeManagement = () => {
               name="salary"
               value={formData.salary}
               onChange={handleChange}
-              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.salary ? "border-red-500" : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
               placeholder="e.g., 50000"
             />
+            {fieldErrors.salary && (
+              <ErrorMessage message={fieldErrors.salary} />
+            )}
           </div>
 
           {/* Employment Type */}
@@ -543,12 +595,19 @@ const EmployeeManagement = () => {
               name="employmentType"
               value={formData.employmentType}
               onChange={handleChange}
-              className="w-full p-3 rounded-md border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200"
+              className={`w-full p-3 rounded-md border ${
+                fieldErrors.employmentType
+                  ? "border-red-500"
+                  : "border-gray-300"
+              } focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition duration-200`}
             >
               <option value="">Select Type</option>
               <option value="Full-Time">Full-Time</option>
               <option value="Part-Time">Part-Time</option>
             </select>
+            {fieldErrors.employmentType && (
+              <ErrorMessage message={fieldErrors.employmentType} />
+            )}
           </div>
 
           {/* Allowance */}
@@ -588,71 +647,103 @@ const EmployeeManagement = () => {
           </button>
         </div>
 
-        {/* Success Popup with Scrollable Content */}
+        {/* Success Popup styled with scrollable content */}
         {isPopupOpen && submittedData && (
-          <div className="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-xl shadow-2xl max-w-md w-full max-h-3/4">
-              <p className="text-green-600 text-2xl font-semibold mb-4 text-center">
-                Employee Created Successfully!
-              </p>
-              <h2 className="text-xl font-bold text-indigo-800 mb-3 text-center">
-                Employee Summary
-              </h2>
-
-              {/* Scrollable content area */}
-              <div className="overflow-y-auto max-h-60 pr-2 space-y-2 text-gray-700">
-                <p>
-                  <strong>Employee ID:</strong> {submittedData.employeeId}
-                </p>
-                <p>
-                  <strong>Full Name:</strong> {submittedData.fullName}
-                </p>
-                <p>
-                  <strong>NIC:</strong> {submittedData.nic}
-                </p>
-                <p>
-                  <strong>Date of Birth:</strong> {submittedData.dateOfBirth}
-                </p>
-                <p>
-                  <strong>Email:</strong> {submittedData.email}
-                </p>
-                <p>
-                  <strong>Phone:</strong> {submittedData.phone}
-                </p>
-                <p>
-                  <strong>Address:</strong> {submittedData.address}
-                </p>
-                <p>
-                  <strong>Department:</strong> {submittedData.department}
-                </p>
-                <p>
-                  <strong>Position:</strong> {submittedData.position}
-                </p>
-                <p>
-                  <strong>Date of Joining:</strong>{" "}
-                  {submittedData.dateOfJoining}
-                </p>
-                <p>
-                  <strong>Salary:</strong> Rs. {submittedData.salary}
-                </p>
-                <p>
-                  <strong>Employment Type:</strong>{" "}
-                  {submittedData.employmentType}
-                </p>
-                <p>
-                  <strong>Allowance:</strong> Rs. {submittedData.allowanceRate}
-                </p>
-                <p>
-                  <strong>Total Salary:</strong> Rs. {submittedData.totalSalary}
+          <div className="fixed inset-0 rounded-2xl bg-black/80 flex justify-center items-end z-50">
+            <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 mb-8">
+              <div className="text-center mb-4">
+                <svg
+                  className="mx-auto h-12 w-12 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <h3 className="text-xl font-bold text-gray-800 mt-2">
+                  Employee Created!
+                </h3>
+                <p className="text-green-600 font-semibold text-sm">
+                  Your registration is now complete
                 </p>
               </div>
 
-              <button
-                onClick={handleClosePopup}
-                className="mt-5 w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-300"
+              {/* Scrollable section with all employee details */}
+              <div
+                className="space-y-2 text-left border-t border-b border-gray-200 py-3 my-3 max-h-64 overflow-y-auto pr-2"
+                style={{ scrollbarWidth: "thin" }}
               >
-                Close
-              </button>
+                <p>
+                  <span className="font-semibold">Employee ID:</span>{" "}
+                  {submittedData.employeeId}
+                </p>
+                <p>
+                  <span className="font-semibold">Name:</span>{" "}
+                  {submittedData.fullName}
+                </p>
+                <p>
+                  <span className="font-semibold">NIC:</span>{" "}
+                  {submittedData.nic}
+                </p>
+                <p>
+                  <span className="font-semibold">Date of Birth:</span>{" "}
+                  {formatDate(submittedData.dateOfBirth)}
+                </p>
+                <p>
+                  <span className="font-semibold">Email:</span>{" "}
+                  {submittedData.email}
+                </p>
+                <p>
+                  <span className="font-semibold">Phone:</span>{" "}
+                  {submittedData.phone}
+                </p>
+                <p>
+                  <span className="font-semibold">Address:</span>{" "}
+                  {submittedData.address}
+                </p>
+                <p>
+                  <span className="font-semibold">Department:</span>{" "}
+                  {submittedData.department}
+                </p>
+                <p>
+                  <span className="font-semibold">Position:</span>{" "}
+                  {submittedData.position}
+                </p>
+                <p>
+                  <span className="font-semibold">Date of Joining:</span>{" "}
+                  {formatDate(submittedData.dateOfJoining)}
+                </p>
+                <p>
+                  <span className="font-semibold">Employment Type:</span>{" "}
+                  {submittedData.employmentType}
+                </p>
+                <p>
+                  <span className="font-semibold">Base Salary:</span> Rs.{" "}
+                  {submittedData.salary}
+                </p>
+                <p>
+                  <span className="font-semibold">Allowance:</span> Rs.{" "}
+                  {submittedData.allowanceRate}
+                </p>
+                <p>
+                  <span className="font-semibold">Total Salary:</span> Rs.{" "}
+                  {submittedData.totalSalary}
+                </p>
+              </div>
+
+              <div className="text-center">
+                <button
+                  onClick={handleClosePopup}
+                  className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02]"
+                >
+                  Close Summary
+                </button>
+              </div>
             </div>
           </div>
         )}
