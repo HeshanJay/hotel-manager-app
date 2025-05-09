@@ -98,13 +98,6 @@ const EmployeeManagement = () => {
           email: "Invalid Email",
         }));
       }
-    } else if (name === "phone") {
-      if (value && !/^\d{10}$/.test(value)) {
-        setFieldErrors((prev) => ({
-          ...prev,
-          phone: "Invalid Phone Number",
-        }));
-      }
     } else if (name === "position") {
       if (value && !/^[A-Za-z\s]+$/.test(value)) {
         setFieldErrors((prev) => ({
@@ -180,11 +173,9 @@ const EmployeeManagement = () => {
       errors.email = "Invalid Email";
     }
 
-    // Phone validation
+    // Phone validation - only check if phone is required, no format validation
     if (!formData.phone) {
       errors.phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.phone)) {
-      errors.phone = "Invalid Phone Number";
     }
 
     // Address validation
@@ -370,6 +361,7 @@ const EmployeeManagement = () => {
               Employee ID
             </label>
             <input
+              id="employeeId"
               type="text"
               name="employeeId"
               value={formData.employeeId}
@@ -384,6 +376,7 @@ const EmployeeManagement = () => {
               Full Name
             </label>
             <input
+              id="fullName"
               type="text"
               name="fullName"
               value={formData.fullName}
@@ -404,6 +397,7 @@ const EmployeeManagement = () => {
               NIC
             </label>
             <input
+              id="nic"
               type="text"
               name="nic"
               value={formData.nic}
@@ -422,6 +416,7 @@ const EmployeeManagement = () => {
               Date of Birth
             </label>
             <input
+              id="dateOfBirth"
               type="date"
               name="dateOfBirth"
               value={formData.dateOfBirth}
@@ -442,6 +437,7 @@ const EmployeeManagement = () => {
               Email
             </label>
             <input
+              id="email"
               type="email"
               name="email"
               value={formData.email}
@@ -460,6 +456,7 @@ const EmployeeManagement = () => {
               Phone
             </label>
             <input
+              id="phone"
               type="tel"
               name="phone"
               value={formData.phone}
@@ -478,6 +475,7 @@ const EmployeeManagement = () => {
               Address
             </label>
             <textarea
+              id="address"
               name="address"
               value={formData.address}
               onChange={handleChange}
@@ -498,6 +496,7 @@ const EmployeeManagement = () => {
               Department
             </label>
             <select
+              id="department"
               name="department"
               value={formData.department}
               onChange={handleChange}
@@ -533,6 +532,7 @@ const EmployeeManagement = () => {
               Position
             </label>
             <input
+              id="position"
               type="text"
               name="position"
               value={formData.position}
@@ -553,6 +553,7 @@ const EmployeeManagement = () => {
               Date of Joining
             </label>
             <input
+              id="dateOfJoining"
               type="date"
               name="dateOfJoining"
               value={formData.dateOfJoining}
@@ -572,6 +573,7 @@ const EmployeeManagement = () => {
               Salary
             </label>
             <input
+              id="salary"
               type="number"
               name="salary"
               value={formData.salary}
@@ -592,6 +594,7 @@ const EmployeeManagement = () => {
               Employment Type
             </label>
             <select
+              id="employmentType"
               name="employmentType"
               value={formData.employmentType}
               onChange={handleChange}
@@ -616,6 +619,7 @@ const EmployeeManagement = () => {
               Allowance
             </label>
             <input
+              id="allowanceRate"
               type="number"
               name="allowanceRate"
               value={formData.allowanceRate}
@@ -630,6 +634,7 @@ const EmployeeManagement = () => {
               Total Salary
             </label>
             <input
+              id="totalSalary"
               type="number"
               name="totalSalary"
               value={formData.totalSalary}
@@ -640,6 +645,7 @@ const EmployeeManagement = () => {
 
           {/* Submit Button */}
           <button
+            id="createEmployeeButton"
             onClick={handleSubmit}
             className="w-full bg-indigo-600 text-white py-3 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition duration-300"
           >
@@ -649,7 +655,10 @@ const EmployeeManagement = () => {
 
         {/* Success Popup styled with scrollable content */}
         {isPopupOpen && submittedData && (
-          <div className="fixed inset-0 rounded-2xl bg-black/80 flex justify-center items-end z-50">
+          <div
+            id="successPopup"
+            className="fixed inset-0 rounded-2xl bg-black/80 flex justify-center items-end z-50"
+          >
             <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full mx-4 mb-8">
               <div className="text-center mb-4">
                 <svg
@@ -665,10 +674,16 @@ const EmployeeManagement = () => {
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                <h3 className="text-xl font-bold text-gray-800 mt-2">
+                <h3
+                  className="text-xl font-bold text-gray-800 mt-2"
+                  id="successTitle"
+                >
                   Employee Created!
                 </h3>
-                <p className="text-green-600 font-semibold text-sm">
+                <p
+                  className="text-green-600 font-semibold text-sm"
+                  id="successMessage"
+                >
                   Your registration is now complete
                 </p>
               </div>
