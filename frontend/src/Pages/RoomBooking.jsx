@@ -88,7 +88,6 @@ const RoomBooking = () => {
     if (!data.checkOut) errors.checkOut = "Check-out date is required";
     else if (data.checkIn && new Date(data.checkIn) >= new Date(data.checkOut))
       errors.checkOut = "Check-out must be after check-in";
-    if (data.adults < 1) errors.adults = "At least one adult is required";
     if (data.children < 0)
       errors.children = "Number of children cannot be negative";
     if (!data.roomType) errors.roomType = "Room type is required";
@@ -664,27 +663,8 @@ const RoomBooking = () => {
                   name="adults"
                   value={formData.adults}
                   onChange={handleChange}
-                  min="1"
-                  className={`w-full px-4 py-3 rounded-lg border ${
-                    errors.adults ? "border-red-500" : "border-gray-300"
-                  } focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm`}
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200 shadow-sm"
                 />
-                {errors.adults && (
-                  <p className="mt-1 text-sm text-red-600 flex items-center">
-                    <svg
-                      className="w-4 h-4 mr-1"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    {errors.adults}
-                  </p>
-                )}
               </div>
               <div>
                 <label
@@ -798,20 +778,31 @@ const RoomBooking = () => {
           </div>
 
           {/* Services */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 relative inline-block">
+          <div id="services-section">
+            <h2
+              id="services-title"
+              className="text-xl font-bold mb-4 relative inline-block"
+            >
               <span className="relative z-10 px-2 bg-white">Services</span>
               <span className="absolute bottom-1 left-0 w-full h-2 bg-blue-100 z-0"></span>
             </h2>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+
+            <div id="additional-services">
+              <label
+                htmlFor="additional-services-label"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Additional Services
               </label>
-              <div className="space-y-3">
-                <label className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+              <div className="space-y-3" id="services-checkbox-group">
+                <label
+                  id="service-breakfast"
+                  className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+                >
                   <div className="flex items-center h-5">
                     <input
                       type="checkbox"
+                      id="checkbox-breakfast"
                       name="breakfast"
                       checked={formData.breakfast}
                       onChange={handleChange}
@@ -822,10 +813,15 @@ const RoomBooking = () => {
                     Breakfast (Rs. {servicePrices.breakfast} adult per night)
                   </span>
                 </label>
-                <label className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+
+                <label
+                  id="service-airport-transfer"
+                  className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+                >
                   <div className="flex items-center h-5">
                     <input
                       type="checkbox"
+                      id="checkbox-airport-transfer"
                       name="airportTransfer"
                       checked={formData.airportTransfer}
                       onChange={handleChange}
@@ -837,10 +833,15 @@ const RoomBooking = () => {
                     booking)
                   </span>
                 </label>
-                <label className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+
+                <label
+                  id="service-golf"
+                  className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+                >
                   <div className="flex items-center h-5">
                     <input
                       type="checkbox"
+                      id="checkbox-golf"
                       name="golf"
                       checked={formData.golf}
                       onChange={handleChange}
@@ -851,10 +852,15 @@ const RoomBooking = () => {
                     Golf (Rs. {servicePrices.golf} adult per day)
                   </span>
                 </label>
-                <label className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
+
+                <label
+                  id="service-spa"
+                  className="flex items-center space-x-3 bg-gray-50 p-3 rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+                >
                   <div className="flex items-center h-5">
                     <input
                       type="checkbox"
+                      id="checkbox-spa"
                       name="spa"
                       checked={formData.spa}
                       onChange={handleChange}
@@ -869,10 +875,11 @@ const RoomBooking = () => {
             </div>
           </div>
 
-          <div className="flex items-start">
+          <div className="flex items-start" id="terms-checkbox-group">
             <div className="flex items-center h-5">
               <input
                 type="checkbox"
+                id="checkbox-terms"
                 name="agreeTerms"
                 checked={formData.agreeTerms}
                 onChange={handleChange}
@@ -880,11 +887,14 @@ const RoomBooking = () => {
               />
             </div>
             <div className="ml-3">
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-gray-700" id="terms-text">
                 I agree to the terms and conditions
               </span>
               {errors.agreeTerms && (
-                <p className="mt-1 text-sm text-red-600 flex items-center">
+                <p
+                  className="mt-1 text-sm text-red-600 flex items-center"
+                  id="terms-error"
+                >
                   <svg
                     className="w-4 h-4 mr-1"
                     fill="currentColor"
@@ -903,16 +913,22 @@ const RoomBooking = () => {
           </div>
 
           {totalCost > 0 && (
-            <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+            <div
+              className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100"
+              id="total-cost-box"
+            >
               <div className="flex justify-between items-center">
                 <span className="text-lg font-semibold text-gray-700">
                   Total Cost:
                 </span>
-                <span className="text-2xl font-bold text-blue-600">
+                <span
+                  className="text-2xl font-bold text-blue-600"
+                  id="total-cost-amount"
+                >
                   Rs. {totalCost.toFixed(2)}
                 </span>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 mt-1" id="total-cost-details">
                 {calculateNumberOfNights(formData.checkIn, formData.checkOut)}{" "}
                 night(s) × {formData.numberOfRooms} room(s)
               </p>
@@ -920,6 +936,7 @@ const RoomBooking = () => {
           )}
 
           <button
+            id="confirm-booking-button"
             onClick={handleSubmit}
             disabled={isSubmitting}
             className={`w-full py-4 px-6 rounded-xl text-white font-bold text-lg shadow-lg transition-all duration-300 ${
@@ -929,7 +946,10 @@ const RoomBooking = () => {
             }`}
           >
             {isSubmitting ? (
-              <span className="flex items-center justify-center">
+              <span
+                className="flex items-center justify-center"
+                id="processing-text"
+              >
                 <svg
                   className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
                   xmlns="http://www.w3.org/2000/svg"
@@ -956,65 +976,73 @@ const RoomBooking = () => {
               "Confirm Booking"
             )}
           </button>
-        </div>
-        {isPopupOpen && (
-          <div className="fixed inset-0 bg-black/70 flex justify-center items-end z-1000">
-            <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full ml-8 mb-15">
-              <div className="text-center mb-6">
-                <svg
-                  className="mx-auto h-16 w-16 text-green-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-                <h3 className="text-2xl font-bold text-gray-800 mt-4">
-                  Booking Confirmed!
-                </h3>
-                <p className="text-green-600 font-semibold mt-2">
-                  Your reservation is now complete
-                </p>
-              </div>
 
-              <div className="space-y-3 text-left border-t border-b border-gray-200 py-4 my-4">
-                <p>
-                  <span className="font-semibold">Booking ID:</span>{" "}
-                  {formData.bookingId}
-                </p>
-                <p>
-                  <span className="font-semibold">Name:</span>{" "}
-                  {formData.fullName}
-                </p>
-                <p>
-                  <span className="font-semibold">Dates:</span>{" "}
-                  {formData.checkIn} to {formData.checkOut}
-                </p>
-                <p>
-                  <span className="font-semibold">Total:</span> Rs.{" "}
-                  {bookingTotalCost.toFixed(2)}
-                </p>
-              </div>
+          {isPopupOpen && (
+            <div
+              className="fixed inset-0 bg-black/70 flex justify-center items-end z-1000"
+              id="booking-popup"
+            >
+              <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-md w-full ml-8 mb-15">
+                <div className="text-center mb-6" id="popup-header">
+                  <svg
+                    className="mx-auto h-16 w-16 text-green-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <h3 className="text-2xl font-bold text-gray-800 mt-4">
+                    Booking Confirmed!
+                  </h3>
+                  <p className="text-green-600 font-semibold mt-2">
+                    Your reservation is now complete
+                  </p>
+                </div>
 
-              <div className="text-center">
-                <button
-                  onClick={() => {
-                    setIsPopupOpen(false);
-                    window.location.reload();
-                  }}
-                  className="w-full bg-indigo-700 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02]"
+                <div
+                  className="space-y-3 text-left border-t border-b border-gray-200 py-4 my-4"
+                  id="popup-summary"
                 >
-                  Close Summary
-                </button>
+                  <p>
+                    <span className="font-semibold">Booking ID:</span>{" "}
+                    {formData.bookingId}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Name:</span>{" "}
+                    {formData.fullName}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Dates:</span>{" "}
+                    {formData.checkIn} to {formData.checkOut}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Total:</span> Rs.{" "}
+                    {bookingTotalCost.toFixed(2)}
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <button
+                    id="close-popup-button"
+                    onClick={() => {
+                      setIsPopupOpen(false);
+                      window.location.reload();
+                    }}
+                    className="w-full bg-indigo-700 hover:bg-indigo-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    Close Summary
+                  </button>
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
