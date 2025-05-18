@@ -4,6 +4,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
+import time
 
 def main():
     # Set up Chrome driver
@@ -58,8 +59,8 @@ def main():
 
     except Exception as e:
         print(f"❌ Test Failed: {str(e)}")
-        driver.save_screenshot("test_failure.png")
     finally:
+        time.sleep(5)
         driver.quit()
 
 if __name__ == "__main__":

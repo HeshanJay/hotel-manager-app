@@ -106,7 +106,6 @@ def main():
 
         except Exception as e:
             print(f"❌ Test Failed: {str(e)}")
-            driver.save_screenshot("email_validation_failure.png")
 
     finally:
         time.sleep(5)

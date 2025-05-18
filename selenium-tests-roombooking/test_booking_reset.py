@@ -153,7 +153,6 @@ def main():
 
         except Exception as e:
             print(f"❌ Test Failed: {str(e)}")
-            driver.save_screenshot("form_reset_failure.png")
 
     finally:
         time.sleep(5)

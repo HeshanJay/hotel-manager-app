@@ -110,7 +110,6 @@ def main():
             assert "207000.00" in total_cost, "Incorrect total cost calculation"
             
             print("✅ Test Passed: Booking successfully created")  # Second success message
-            driver.save_screenshot("test_passed.png")
             
             # Close popup
             driver.find_element(By.ID, "close-popup-button").click()
@@ -125,7 +124,6 @@ def main():
                 print("Validation errors:")
                 for error in errors:
                     print(f" - {error.text}")
-            driver.save_screenshot("test_failure.png")
 
     finally:
         driver.quit()

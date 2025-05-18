@@ -111,7 +111,6 @@ def main():
 
     except Exception as e:
         print(f"❌ Test Failed: {str(e)}")
-        driver.save_screenshot("test_failure.png")
     finally:
         time.sleep(5)
         driver.quit()

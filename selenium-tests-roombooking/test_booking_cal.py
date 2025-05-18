@@ -253,10 +253,8 @@ def main():
             # Overall test result
             if expected_popup_cost in popup_total_cost:
                 print("\n✅ TEST PASSED: Total cost calculation is accurate")
-                driver.save_screenshot("cost_calculation_passed.png")
             else:
                 print("\n❌ TEST FAILED: Total cost calculation is incorrect")
-                driver.save_screenshot("cost_calculation_failed.png")
             
             # Close popup
             driver.find_element(By.ID, "close-popup-button").click()
